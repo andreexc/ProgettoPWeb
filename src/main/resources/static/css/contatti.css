@@ -1,0 +1,32 @@
+/* Top padding for navbar overlapping */
+.main-content {
+    padding-top: 5rem;
+}
+
+/* Form icon shape */
+.icon-shape {
+    width: 60px;
+    height: 60px;
+    background-color: #1a1a1a !important;
+}
+
+/* Rende i campi di input leggermente più moderni e arrotondati */
+.form-control, .input-group-text {
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    border-radius: 10px;
+}
+
+.form-control:focus {
+    background-color: #ffffff;
+    border-color: #1a1a1a;
+    box-shadow: 0 0 0 0.25rem rgba(26, 26, 26, 0.1);
+}
+
+/* Animazione soft quando si passa sopra al pulsante invia */
+.hover-lift {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15) !important;
+}
