@@ -1,0 +1,76 @@
+/*
+    --- Navbar container ---
+*/
+.custom-navbar-capsule {
+    background-color: #1a1a1a !important;
+    border-radius: 50px;                   /* Oval shape */
+    padding: 0.5rem 1rem;
+    margin: 1.5rem auto;
+    max-width: 900px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15); /* Light shadow effect under the bar */
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/*
+    --- Logo box ---
+*/
+.custom-brand-circle {
+    background-color: #ffffff;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.custom-brand-circle:hover {
+    transform: scale(1.05);
+}
+
+/*
+    --- Navigation link style ---
+*/
+.custom-navbar-capsule .nav-link {
+    color: #b3b3b3 !important;
+    font-weight: 500;
+    padding: 0.5rem 1.2rem !important;
+    transition: color 0.2s ease;
+}
+
+.custom-navbar-capsule .nav-link:hover,
+.custom-navbar-capsule .nav-link.active {
+    color: #ffffff !important;
+}
+
+/*
+    --- Oval shape button on right side ---
+*/
+.custom-navbar-btn {
+    background-color: #ffffff !important;
+    color: #1a1a1a !important;
+    font-weight: 600;
+    border-radius: 30px !important;
+    padding: 0.6rem 1.5rem !important;
+    border: none;
+    transition: background-color 0.2s ease, transform 0.2s ease !important;
+}
+
+.custom-navbar-btn:hover {
+    background-color: #e6e6e6 !important;
+    transform: scale(1.02);
+}
+
+/*
+    --- Responsiveness for small-screen devices ---
+*/
+@media (max-width: 991.98px) {
+    .custom-navbar-capsule {
+        border-radius: 20px; /* Downscaling radius to save space */
+        margin: 1rem;
+    }
+    .custom-navbar-capsule .navbar-collapse {
+        padding-top: 1rem;
+    }
+}
