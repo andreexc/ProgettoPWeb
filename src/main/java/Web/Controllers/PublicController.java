@@ -5,6 +5,8 @@ import Web.Controllers.DTO.SignupForm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
 public class PublicController {
@@ -22,6 +24,16 @@ public class PublicController {
     public String signup(Model model) {
         model.addAttribute("signupForm", new SignupForm());
         return "auth/signup";
+    }
+
+    /* Register new users (data via post) */
+    @PostMapping("/signup")
+    public String processSignup(@ModelAttribute("signupForm") SignupForm signupForm) {
+
+        // need checkuser, print only for testing
+        System.out.println("Simulazione Signup - Ricevuto utente: " + signupForm.getUsername());
+
+        return "auth/registration_success";
     }
 
     @GetMapping("/logout")
