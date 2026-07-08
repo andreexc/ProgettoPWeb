@@ -16,9 +16,9 @@ public class RecensioneRepository {
 
     public List<Recensione> findAll() {
         String sql = "SELECT id, username, " +
-                     "testo_recensione AS testoRecensione, " +
-                     "data_recensione AS dataRecensione " +
-                     "FROM reviews ORDER BY data_recensione DESC";
+                "testo_recensione AS testoRecensione, " +
+                "data_recensione AS dataRecensione " +
+                "FROM reviews ORDER BY data_recensione DESC";
 
         return jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Recensione.class));
     }
@@ -27,3 +27,4 @@ public class RecensioneRepository {
         String sql = "INSERT INTO reviews (username, testo_recensione) VALUES (?, ?)";
         jdbcTemplate.update(sql, r.getUsername(), r.getTestoRecensione());
     }
+}
