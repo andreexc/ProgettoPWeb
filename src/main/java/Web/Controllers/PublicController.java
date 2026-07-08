@@ -24,6 +24,9 @@ public class PublicController {
         return "auth/signup";
     }
 
+    @GetMapping("/logout")
+    public String logout() { return "auth/logout"; }
+
     @GetMapping("/contatti")
     public String contatti() { return "contatti"; }
 }
