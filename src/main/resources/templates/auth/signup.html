@@ -1,92 +1,113 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Signup</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
-    <link th:href="@{/css/auth.css}" href="../../static/css/auth.css" rel="stylesheet">
+    <title>Olympus Fitness - Registrati</title>
+
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/OlympusFitness_logo.svg}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/signup.css}">
 </head>
-<body class="bg-light d-flex align-items-center justify-content-center vh-100">
+<body class="bg-light d-flex flex-column min-vh-100">
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-md-6 col-lg-6">
-            <div class="card shadow-sm border-0 rounded-3">
-                <div class="card-body p-5 p-sm-6">
-                    <h3 class="card-title text-center mb-4 fw-bold text-primary">Registrati</h3>
+<div th:replace="~{fragments/navbar :: headerNav}"></div>
 
-                    <form th:action="@{/signup}" th:object="${signupForm}" method="post">
-                        <div class="form-floating mb-3">
-                            <input type="text" th:field="*{nome}" class="form-control" id="nameInput" placeholder="Inserisci il tuo nome" required>
-                            <label for="nameInput">Nome</label>
-                        </div>
+<main class="flex-grow-1 position-relative w-100 d-flex align-items-center justify-content-center" style="min-height: 100vh; overflow: hidden;">
 
-                        <div class="form-floating mb-3">
-                            <input type="text" th:field="*{cognome}" class="form-control" id="surnameInput" placeholder="Inserisci il tuo cognome" required>
-                            <label for="surnameInput">Cognome</label>
-                        </div>
+    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop"
+         class="position-absolute top-0 start-0 w-100 h-100"
+         style="object-fit: cover; z-index: -2;" alt="Gym Background">
+    <div class="position-absolute top-0 start-0 w-100 h-100"
+         style="background: rgba(0, 0, 0, 0.7); z-index: -1;"></div>
 
-                        <div class="form-floating mb-3">
-                            <input type="date" th:field="*{dataNascita}" id="birthdateInput" class="form-control" required>
-                            <label for="birthdateInput">Data di nascita</label>
-                        </div>
+    <div class="container" style="padding-top: 8rem; padding-bottom: 4rem;">
+        <div class="row justify-content-center">
+            <div class="col-md-8 col-lg-6">
+                <div class="card auth-card shadow border-0 rounded-4">
+                    <div class="card-body p-4 p-sm-5 text-dark">
+                        <h2 class="card-title text-center mb-4 fw-bold">Registrati</h2>
 
-                        <div class="form-floating mb-3">
-                            <input type="email" th:field="*{email}" id="emailInput" class="form-control" placeholder="Inserisci la tua mail" required>
-                            <label for="emailInput">Email</label>
-                        </div>
+                        <form th:action="@{/signup}" th:object="${signupForm}" method="post">
+                            <div class="row">
+                                <div class="col-sm-6 mb-3">
+                                    <div class="form-floating text-dark">
+                                        <input type="text" th:field="*{nome}" class="form-control custom-input" id="nameInput" placeholder="Nome" required>
+                                        <label for="nameInput">Nome</label>
+                                    </div>
+                                </div>
+                                <div class="col-sm-6 mb-3">
+                                    <div class="form-floating text-dark">
+                                        <input type="text" th:field="*{cognome}" class="form-control custom-input" id="surnameInput" placeholder="Cognome" required>
+                                        <label for="surnameInput">Cognome</label>
+                                    </div>
+                                </div>
+                            </div>
 
-                        <div class="form-floating mb-3">
-                            <input type="text" th:field="*{username}" class="form-control" id="usernameInput" placeholder="Inserisci username" required>
-                            <label for="usernameInput">Username</label>
-                        </div>
+                            <div class="form-floating mb-3 text-dark">
+                                <input type="date" th:field="*{dataNascita}" id="birthdateInput" class="form-control custom-input" required>
+                                <label for="birthdateInput">Data di nascita</label>
+                            </div>
 
-                        <div class="input-group mb-3">
-                            <div class="form-floating flex-grow-1">
-                                <input type="password" th:field="*{password}" id="loginPassword" class="form-control" placeholder="Password" required>
+                            <div class="form-floating mb-3 text-dark">
+                                <input type="email" th:field="*{email}" id="emailInput" class="form-control custom-input" placeholder="Email" required>
+                                <label for="emailInput">Email</label>
+                            </div>
+
+                            <div class="form-floating mb-3 text-dark">
+                                <input type="text" th:field="*{username}" class="form-control custom-input" id="usernameInput" placeholder="Username" required>
+                                <label for="usernameInput">Username</label>
+                            </div>
+
+                            <div class="form-floating mb-3 position-relative">
+                                <input type="password" th:field="*{password}" id="loginPassword" class="form-control custom-input pe-5" placeholder="Password" required>
                                 <label for="loginPassword">Password</label>
+                                <button class="btn btn-reveal-inside position-absolute top-50 end-0 translate-middle-y me-2" type="button" data-toggle-password="loginPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
                             </div>
-                            <button class="btn btn-outline-secondary" type="button" data-toggle-password="loginPassword">
-                                <i class="bi bi-eye"></i>
-                            </button>
-                        </div>
 
-                        <div class="input-group">
-                            <div class="form-floating flex-grow-1">
-                                <input type="password" name="confirmPassword" id="confirmPassword" class="form-control" placeholder="Conferma Password" required>
-                                <label for="confirmPassword">Conferma Password</label>
+                            <div class="form-floating mb-3 position-relative">
+                                <input type="password" th:field="*{password}" id="loginPassword" class="form-control custom-input pe-5" placeholder="Password" required>
+                                <label for="loginPassword">Conferma Password</label>
+                                <button class="btn btn-reveal-inside position-absolute top-50 end-0 translate-middle-y me-2" type="button" data-toggle-password="loginPassword">
+                                    <i class="bi bi-eye"></i>
+                                </button>
                             </div>
-                            <button class="btn btn-outline-secondary" type="button" data-toggle-password="confirmPassword">
-                                <i class="bi bi-eye"></i>
+
+                            <div id="differentPasswords" class="alert alert-danger p-2 text-center small mt-3 d-none border-0 rounded-3" role="alert">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>Le password non corrispondono!
+                            </div>
+
+                            <div id="wrongPassword" class="alert alert-danger p-2 small mt-3 d-none border-0 rounded-3" role="alert">
+                                <div class="text-center fw-bold mb-1"><i class="bi bi-shield-slash-fill me-2"></i>La password deve contenere:</div>
+                                <ul class="mb-0 ps-3">
+                                    <li>Almeno 8 caratteri</li>
+                                    <li>Il pattern identificativo richiesto</li>
+                                </ul>
+                            </div>
+
+                            <button class="btn btn-light btn-lg w-100 fw-bold rounded-pill shadow-sm mt-4" type="submit">
+                                Completa Registrazione
                             </button>
+                        </form>
+
+                        <div class="text-center mt-4">
+                            <p class="small text-muted mb-0">Hai già un account? <a th:href="@{/login}" class="text-dark fw-bold text-decoration-none hover-underline">Accedi</a></p>
                         </div>
-
-                        <div id="differentPasswords" class="alert alert-danger p-2 text-center small mt-3 d-none" role="alert">
-                            Le password non corrispondono!
-                        </div>
-
-                        <div id="wrongPassword" class="alert alert-danger p-2 text-center small mt-3 d-none" role="alert">
-                            Le password devono contenere:
-                            <ol>
-                                <li>Almeno 8 caratteri</li>
-                                <li>id_20</li>
-                            </ol>
-                        </div>
-
-
-
-                        <button class="btn btn-primary w-100 py-2 fw-medium mt-4" type="submit">Registrati</button>
-                    </form>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</main>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-<script th:src="@{/js/auth/passwordEye.js}" src="../../static/js/auth/passwordEye.js"></script>
-<script th:src="@{/js/auth/passwordChecker.js}" src="../../static/js/auth/passwordChecker.js"></script>
+<div th:replace="~{fragments/footer :: publicFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script th:src="@{/js/auth/passwordEye.js}"></script>
+<script th:src="@{/js/auth/passwordChecker.js}"></script>
 </body>
 </html>

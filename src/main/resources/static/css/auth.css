@@ -1,17 +1,43 @@
-:root {
-    --bs-primary: #128c54;
-    --bs-primary-rgb: 18, 140, 84;
+/* Form Card */
+.auth-card {
+    background: rgba(26, 26, 26, 0.65) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
-.btn-primary {
-    --bs-btn-bg: #128c54;
-    --bs-btn-border-color: #128c54;
-    --bs-btn-hover-bg: #00ff73;
-    --bs-btn-hover-border-color: #00ff73;
-    --bs-btn-hover-color: #000;
-    --bs-btn-active-bg: #00d15e;
-    --bs-btn-active-border-color: #00d15e;
-    --bs-btn-active-color: #000;
-    --bs-btn-focus-shadow-rgb: 0, 255, 115;
 
-    transition: all 0.2s ease-in-out;
+/* Input Fields */
+.custom-input {
+    border-radius: 10px !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+}
+
+.custom-input:focus {
+    border-color: #1a1a1a !important;
+    box-shadow: 0 0 0 0.25rem rgba(26, 26, 26, 0.15) !important;
+}
+
+/* Signup input specific fix */
+input[type="date"].custom-input {
+    padding-top: 1.625rem;
+    padding-bottom: 0.625rem;
+}
+
+/* reveal password button */
+.btn-reveal {
+    background-color: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.15) !important;
+    border-left: none !important;
+    border-top-right-radius: 10px !important;
+    border-bottom-right-radius: 10px !important;
+    color: #6c757d !important;
+}
+
+.btn-reveal:hover {
+    color: #1a1a1a !important;
+}
+
+/* "dont'have an account" login page underline */
+.hover-underline:hover {
+    text-decoration: underline !important;
 }
