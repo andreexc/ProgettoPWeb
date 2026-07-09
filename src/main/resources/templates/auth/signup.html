@@ -31,6 +31,11 @@
                         <h2 class="card-title text-center mb-4 fw-bold">Registrati</h2>
 
                         <form th:action="@{/signup}" th:object="${signupForm}" method="post">
+                            <div th:if="${signupError}" class="alert text-center border-0 small py-2 mb-3" role="alert"
+                                 style="background-color: #f8d7da; color: #842029; border: 1px solid #f5c2c7 !important;">
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                <b th:text="${signupError}">Errore di registrazione</b>
+                            </div>
                             <div class="row">
                                 <div class="col-sm-6 mb-3">
                                     <div class="form-floating text-dark">
@@ -70,8 +75,8 @@
                             </div>
 
                             <div class="form-floating mb-3 position-relative">
-                                <input type="password" th:field="*{password}" id="ConfirmloginPassword" class="form-control custom-input pe-5" placeholder="Password" required>
-                                <label for="loginPassword">Conferma Password</label>
+                                <input type="password" th:field="*{confermaPassword}" id="ConfirmloginPassword" class="form-control custom-input pe-5" placeholder="Conferma Password" required>
+                                <label for="ConfirmloginPassword">Conferma Password</label>
                                 <button class="btn btn-reveal-inside position-absolute top-50 end-0 translate-middle-y me-2" type="button" data-toggle-password="ConfirmloginPassword">
                                     <i class="bi bi-eye"></i>
                                 </button>
@@ -79,6 +84,34 @@
 
                             <div id="differentPasswords" class="alert alert-danger p-2 text-center small mt-3 d-none border-0 rounded-3" role="alert">
                                 <i class="bi bi-exclamation-triangle-fill me-2"></i>Le password non corrispondono!
+                            </div>
+
+                            <h5 class="fw-bold mb-3 mt-4 text-dark">Seleziona il tuo piano di allenamento</h5>
+                            <div class="row g-3 mb-4">
+                                <div class="col-md-4">
+                                    <label class="card h-100 p-3 text-center border rounded-3 custom-plan-card" style="cursor: pointer;">
+                                        <input type="radio" th:field="*{pianoAllenamento}" value="Prova" class="form-check-input mx-auto mb-2" required>
+                                        <span class="fw-bold d-block text-dark">Prova</span>
+                                        <small class="text-muted d-block my-2" style="font-size: 0.75rem;">Accesso limitato alle funzioni base per testare la piattaforma.</small>
+                                        <span class="badge bg-secondary mt-auto">Gratis</span>
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="card h-100 p-3 text-center border rounded-3 custom-plan-card" style="cursor: pointer;">
+                                        <input type="radio" th:field="*{pianoAllenamento}" value="Basic" class="form-check-input mx-auto mb-2">
+                                        <span class="fw-bold d-block text-dark">Basic</span>
+                                        <small class="text-muted d-block my-2" style="font-size: 0.75rem;">Schede di allenamento standard e tracciamento kcal.</small>
+                                        <span class="badge bg-primary mt-auto">€9.99 / mese</span>
+                                    </label>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="card h-100 p-3 text-center border rounded-3 custom-plan-card" style="cursor: pointer;">
+                                        <input type="radio" th:field="*{pianoAllenamento}" value="Pro" class="form-check-input mx-auto mb-2">
+                                        <span class="fw-bold d-block text-dark">Pro</span>
+                                        <small class="text-muted d-block my-2" style="font-size: 0.75rem;">Programmi personalizzati illimitati e supporto avanzato.</small>
+                                        <span class="badge bg-warning text-dark mt-auto">€99.00 / anno</span>
+                                    </label>
+                                </div>
                             </div>
 
                             <div id="wrongPassword" class="alert alert-danger p-2 small mt-3 d-none border-0 rounded-3" role="alert">
