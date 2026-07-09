@@ -1,20 +1,27 @@
+-- DROP TABLE IF EXISTS reviews;
+-- DROP TABLE IF EXISTS personal_programs;
+-- DROP TABLE IF EXISTS exercise;
+-- DROP TABLE IF EXISTS user_details;
+-- DROP TABLE IF EXISTS authorities;
+-- DROP TABLE IF EXISTS users;
+
 -- Standard Spring-Security tables
-CREATE TABLE users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    password VARCHAR(100) NOT NULL,
-    enabled BOOLEAN NOT NULL
+CREATE TABLE IF NOT EXISTS users (
+   id BIGINT AUTO_INCREMENT PRIMARY KEY,
+   username VARCHAR(50) NOT NULL UNIQUE,
+   password VARCHAR(100) NOT NULL,
+   enabled BOOLEAN NOT NULL
 );
 
-CREATE TABLE authorities (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    authority VARCHAR(50) NOT NULL,
-    CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)
+CREATE TABLE IF NOT EXISTS authorities (
+     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+     username VARCHAR(50) NOT NULL,
+     authority VARCHAR(50) NOT NULL,
+     CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)
 );
 
 -- User infos table
-CREATE TABLE user_details (
+CREATE TABLE IF NOT EXISTS user_details (
     username VARCHAR(50) NOT NULL PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,
     cognome VARCHAR(50) NOT NULL,
@@ -27,7 +34,7 @@ CREATE TABLE user_details (
 );
 
 -- Exercise programs tables
-CREATE TABLE exercise (
+CREATE TABLE IF NOT EXISTS exercise (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     nome_esercizio VARCHAR(100) NOT NULL,
     numero_serie INT NOT NULL,
@@ -35,7 +42,7 @@ CREATE TABLE exercise (
     kcal INT NOT NULL
 );
 
-CREATE TABLE personal_programs (
+CREATE TABLE IF NOT EXISTS personal_programs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     nome_allenamento VARCHAR(100) NOT NULL,
@@ -47,7 +54,7 @@ CREATE TABLE personal_programs (
 );
 
 -- Review table
-CREATE TABLE reviews (
+CREATE TABLE IF NOT EXISTS reviews (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     testo_recensione TEXT NOT NULL,
