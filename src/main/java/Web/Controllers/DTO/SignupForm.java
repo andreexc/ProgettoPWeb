@@ -7,6 +7,8 @@ public class SignupForm {
     private String email;
     private String username;
     private String password;
+    private String confermaPassword;
+    private String pianoAllenamento;
 
     public String getNome() { return nome; }
     public void setNome(String nome) { this.nome = nome; }
@@ -20,4 +22,8 @@ public class SignupForm {
     public void setUsername(String username) { this.username = username; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public void setConfermaPassword(String password) { this.confermaPassword = password; }
+    public String getConfermaPassword() { return this.confermaPassword; }
+    public String getPianoAllenamento() { return pianoAllenamento; }
+    public void setPianoAllenamento(String pianoAllenamento) { this.pianoAllenamento = pianoAllenamento; }
 }
