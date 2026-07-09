@@ -1,6 +1,7 @@
--- Tabelle standard per Spring Security
+-- Standard Spring-Security tables
 CREATE TABLE users (
-    username VARCHAR(50) NOT NULL PRIMARY KEY,
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50) NOT NULL,
     password VARCHAR(100) NOT NULL,
     enabled BOOLEAN NOT NULL
 );
@@ -12,7 +13,7 @@ CREATE TABLE authorities (
     CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)
 );
 
--- Tabella per i dati anagrafici degli utenti
+-- User infos table
 CREATE TABLE user_details (
     username VARCHAR(50) NOT NULL PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,
@@ -25,20 +26,27 @@ CREATE TABLE user_details (
     CONSTRAINT fk_details_users FOREIGN KEY(username) REFERENCES users(username)
 );
 
--- Tabella per programmi personalizzati (Solo ROLE_USER_PRO)
+-- Exercise programs tables
+CREATE TABLE exercise (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    nome_esercizio VARCHAR(100) NOT NULL,
+    numero_serie INT NOT NULL,
+    numero_ripetizioni INT NOT NULL,
+    kcal INT NOT NULL
+);
+
 CREATE TABLE personal_programs (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
     nome_allenamento VARCHAR(100) NOT NULL,
-    nome_esercizio VARCHAR(100) NOT NULL,
-    numero_serie INT NOT NULL,
-    numero_ripetizioni INT NOT NULL,
-    kcal INT NOT NULL,
+    id_esercizio INT NOT NULL,
+    kcal_totali INT NOT NULL,
     completato_count INT DEFAULT 0,
-    CONSTRAINT fk_programs_users FOREIGN KEY(username) REFERENCES users(username)
+    CONSTRAINT fk_programs_users FOREIGN KEY(username) REFERENCES users(username),
+    CONSTRAINT fk_programs_exercise FOREIGN KEY(id_esercizio) REFERENCES exercise(id)
 );
 
--- Tabella per le recensioni (AJAX)
+-- Review table
 CREATE TABLE reviews (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
