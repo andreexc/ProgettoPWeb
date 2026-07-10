@@ -22,19 +22,10 @@ import java.time.LocalDate;
 @Controller
 public class PublicController {
 
-    private final JdbcUserDetailsManager userDetailsManager;
-    private final JdbcTemplate jdbcTemplate;
-    private final PasswordEncoder passwordEncoder;
     private final CheckUserService checkUserService;
 
     // Injecting
-    public PublicController(JdbcUserDetailsManager userDetailsManager,
-                            JdbcTemplate jdbcTemplate,
-                            PasswordEncoder passwordEncoder,
-                            CheckUserService checkUserService) {
-        this.userDetailsManager = userDetailsManager;
-        this.jdbcTemplate = jdbcTemplate;
-        this.passwordEncoder = passwordEncoder;
+    public PublicController(CheckUserService checkUserService) {
         this.checkUserService = checkUserService;
     }
 
