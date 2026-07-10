@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS authorities (
 
 -- User infos table
 CREATE TABLE IF NOT EXISTS user_details (
-    username VARCHAR(50) NOT NULL PRIMARY KEY,
+    id BIGINT PRIMARY KEY,
     nome VARCHAR(50) NOT NULL,
     cognome VARCHAR(50) NOT NULL,
     data_nascita DATE NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS user_details (
     data_iscrizione DATE NOT NULL,
     piano_allenamento VARCHAR(20) NOT NULL,
     allenamenti_completati INT DEFAULT 0,
-    CONSTRAINT fk_details_users FOREIGN KEY(username) REFERENCES users(username)
+    CONSTRAINT fk_details_users FOREIGN KEY(id) REFERENCES users(id)
 );
 
 -- Exercise programs tables
