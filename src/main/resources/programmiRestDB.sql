@@ -1,14 +1,20 @@
-CREATE TABLE training_catalog (
+CREATE TABLE program (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    tipo_programma VARCHAR(50) NOT NULL,
-    nome_esercizio VARCHAR(100) NOT NULL,
-    serie INT NOT NULL,
-    ripetizioni INT NOT NULL,
-    kcal INT NOT NULL
-);
+    tipo_programma INT NOT NULL
+) ENGINE=InnoDB;
 
-INSERT INTO training_catalog (tipo_programma, nome_esercizio, serie, ripetizioni, kcal) VALUES
-    ('Full Body', 'Squat', 3, 12, 150),
-    ('Push/Pull/Legs', 'Panca Piana', 4, 8, 120),
-    ('Cardio', 'Corsa sul posto', 1, 20, 300),
-    ('Strength', 'Stacco da terra', 5, 5, 200);
+CREATE TABLE exercise (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    esercizio VARCHAR(50),
+    kcal INT NOT NULL
+) ENGINE=InnoDB;
+
+CREATE TABLE training_exercise (
+    id_esercizio BIGINT NOT NULL,
+    id_programma BIGINT NOT NULL,
+    n_serie INT,
+    n_ripetizioni INT,
+    PRIMARY KEY (id_esercizio, id_programma),
+    FOREIGN KEY (id_esercizio) REFERENCES exercise(id),
+    FOREIGN KEY (id_programma) REFERENCES program(id)
+) ENGINE=InnoDB;
