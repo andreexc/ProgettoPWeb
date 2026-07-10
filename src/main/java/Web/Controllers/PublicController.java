@@ -2,6 +2,7 @@ package Web.Controllers;
 
 import Web.Controllers.DTO.LoginForm;
 import Web.Controllers.DTO.SignupForm;
+import Web.Services.CheckUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.core.authority.AuthorityUtils;
@@ -21,17 +22,11 @@ import java.time.LocalDate;
 @Controller
 public class PublicController {
 
-    private final JdbcUserDetailsManager userDetailsManager;
-    private final JdbcTemplate jdbcTemplate;
-    private final PasswordEncoder passwordEncoder; // 1. Aggiungi il campo
+    private final CheckUserService checkUserService;
 
     // Injecting
-    public PublicController(JdbcUserDetailsManager userDetailsManager,
-                            JdbcTemplate jdbcTemplate,
-                            PasswordEncoder passwordEncoder) {
-        this.userDetailsManager = userDetailsManager;
-        this.jdbcTemplate = jdbcTemplate;
-        this.passwordEncoder = passwordEncoder;
+    public PublicController(CheckUserService checkUserService) {
+        this.checkUserService = checkUserService;
     }
 
     @GetMapping({"/", "/index"})
@@ -71,52 +66,26 @@ public class PublicController {
     @PostMapping("/signup")
     public String processSignup(@ModelAttribute("signupForm") SignupForm signupForm, Model model) {
 
-        // Password server-side check
+        // Double check also server-side
         if (signupForm.getPassword().length() != 8 || !signupForm.getPassword().contains("id_20")) {
             model.addAttribute("signupError", "La password deve essere di 8 caratteri e contenere 'id_20'");
             return "auth/signup";
         }
 
-        // Password match check
         if (!signupForm.getPassword().equals(signupForm.getConfermaPassword())) {
             model.addAttribute("signupError", "Le password inserite non coincidono!");
             return "auth/signup";
         }
 
-        // Check if username already exists
-        if (userDetailsManager.userExists(signupForm.getUsername())) {
+        // External service for registration
+        boolean registrationSuccess = checkUserService.checkAndRegisterUser(signupForm);
+
+        if (!registrationSuccess) {
+            // Se l'utente esiste già, il servizio restituisce false e ricarichiamo la pagina con l'errore
             model.addAttribute("signupError", "Questo username è già registrato!");
             return "auth/signup";
         }
 
-        // Fitness plan parsing
-        String authorityString;
-        switch (signupForm.getPianoAllenamento()) {
-            case "Prova" -> authorityString = "ROLE_USER_PROVA";
-            case "Pro" -> authorityString = "ROLE_USER_PRO";
-            default -> authorityString = "ROLE_USER_BASIC";
-        }
-
-        // Passwordd encoding
-        String passwordCifrata = passwordEncoder.encode(signupForm.getPassword());
-
-        String sqlUser = "INSERT INTO users (username, password, enabled) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sqlUser, signupForm.getUsername(), passwordCifrata, true); // <-- Encoded password
-
-        String sqlAuth = "INSERT INTO authorities (username, authority) VALUES (?, ?)";
-        jdbcTemplate.update(sqlAuth, signupForm.getUsername(), authorityString);
-
-        String sqlDetails = "INSERT INTO user_details (username, nome, cognome, data_nascita, email, data_iscrizione, piano_allenamento, allenamenti_completati) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sqlDetails,
-                signupForm.getUsername(),
-                signupForm.getNome(),
-                signupForm.getCognome(),
-                signupForm.getDataNascita(),
-                signupForm.getEmail(),
-                LocalDate.now(),
-                signupForm.getPianoAllenamento(),
-                0
-        );
         return "auth/registration_success";
     }
 
