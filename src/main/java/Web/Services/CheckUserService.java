@@ -26,13 +26,12 @@ public class CheckUserService {
     public boolean checkAndRegisterUser(SignupForm signupForm) {
 
         if (userDetailsManager.userExists(signupForm.getUsername())) return false;
-
-        // 2. Definizione del ruolo in base al piano scelto
+        
         String authorityString;
         switch (signupForm.getPianoAllenamento()) {
-            case "Prova" -> authorityString = "USER_PROVA";
-            case "Pro" -> authorityString = "USER_PRO";
-            case "Basic" -> authorityString = "USER_BASIC";
+            case "Prova" -> authorityString = "ROLE_USER_PROVA";
+            case "Pro" -> authorityString = "ROLE_USER_PRO";
+            case "Basic" -> authorityString = "ROLE_USER_BASIC";
             default -> { return false; }  // error with plan selection
         }
 
