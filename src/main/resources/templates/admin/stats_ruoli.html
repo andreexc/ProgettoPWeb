@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Olympus Fitness - Medie Matematiche</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    </head>
+    <body class="bg-dark text-white d-flex align-items-center justify-content-center min-vh-100"
+          style="background: linear-gradient(rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.85)), url('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000') no-repeat center center/cover;">
+
+        <div class="container" style="max-width: 550px;">
+            <div class="card bg-black border-0 shadow rounded-4 text-white p-4">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-3">
+                    <h4 class="fw-bold m-0 text-warning">
+                        <i class="bi bi-calculator-fill me-2"></i>Media Allenamenti per Ruolo
+                    </h4>
+                    <a th:href="@{/admin/home}" class="btn btn-sm btn-outline-light rounded-pill px-3">
+                        <i class="bi bi-x-lg"></i>
+                    </a>
+                </div>
+
+                <p class="text-secondary small mb-4">Rapporto matematico tra le sessioni registrate in tempo reale e il numero totale di iscritti attivi nelle rispettive fasce.</p>
+
+                <div class="p-3 mb-3 rounded-3" style="background-color: #111; border-left: 5px solid #0d6efd;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-primary px-3 py-1 rounded-pill small">Piano Basic</span>
+                            <div class="text-secondary small mt-1">Media sessioni per iscritto</div>
+                        </div>
+                        <h1 class="fw-bold text-white m-0" th:text="${#numbers.formatDecimal(mediaBasic, 1, 1)}">0.0</h1>
+                    </div>
+                </div>
+
+                <div class="p-3 rounded-3" style="background-color: #111; border-left: 5px solid #dc3545;">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <span class="badge bg-danger px-3 py-1 rounded-pill small">Piano Pro</span>
+                            <div class="text-secondary small mt-1">Media sessioni per iscritto</div>
+                        </div>
+                        <h1 class="fw-bold text-white m-0" th:text="${#numbers.formatDecimal(mediaPro, 1, 1)}">0.0</h1>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </body>
+</html>
