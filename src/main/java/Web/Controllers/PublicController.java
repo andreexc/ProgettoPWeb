@@ -31,7 +31,7 @@ public class PublicController {
 
     @GetMapping({"/", "/index"})
     public String home() {
-        return "index";
+        return "public/index";
     }
 
     @GetMapping("/login")
@@ -96,6 +96,6 @@ public class PublicController {
 
     @GetMapping("/contatti")
     public String contatti() {
-        return "contatti";
+        return "public/contatti";
     }
 }

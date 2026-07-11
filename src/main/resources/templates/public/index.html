@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Olympus Fitness - Home</title>
+
+        <link rel="icon" type="image/svg+xml" th:href="@{/images/OlympusFitness_logo.svg}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/css/index.css}">
+    </head>
+    <body class="bg-light d-flex flex-column min-vh-100">
+        <div th:replace="~{fragments/navbar :: headerNav}"></div>
+        <main class="flex-grow-1 position-relative w-100" style="min-height: 85vh; overflow: hidden;">
+
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop"
+                 class="position-absolute top-0 start-0 w-100 h-100"
+                 style="object-fit: cover; z-index: -2;" alt="Gym Background">
+
+            <div class="position-absolute top-0 start-0 w-100 h-100"
+                 style="background: rgba(0, 0, 0, 0.65); z-index: -1;"></div>
+
+            <div class="container d-flex align-items-center justify-content-center text-center text-white"
+                 style="min-height: 85vh; padding-top: 7rem; padding-bottom: 3rem;">
+                <div class="hero-content">
+                    <h1 class="display-3 fw-bold mb-4">Olympus Fitness</h1>
+                    <p class="lead col-lg-8 mx-auto mb-5 text-shadow">
+                        Olympus Fitness è la piattaforma web d'avanguardia nata per digitalizzare e semplificare la gestione della
+                        tua scheda di allenamento. Progettata specificamente per i frequentatori del nostro centro,
+                        ti permette di consultare i programmi predefiniti o personalizzati in qualsiasi momento direttamente dal
+                        tuo smartphone o PC. Scegli Olympus per tracciare i tuoi progressi in tempo reale, completare le sessioni
+                        e raggiungere i tuoi obiettivi con il supporto interattivo del nostro staff.
+                    </p>
+                    <div class="d-sm-flex justify-content-center gap-3">
+                        <a th:href="@{/signup}" class="btn btn-light btn-lg px-4 py-3 fw-bold rounded-pill shadow-sm mb-3 mb-sm-0">
+                            <i class="bi bi-person-plus-fill me-2"></i>Registrati
+                        </a>
+                        <a th:href="@{/login}" class="btn btn-outline-light btn-lg px-4 py-3 fw-bold rounded-pill shadow-sm mb-3 mb-sm-0">
+                            <i class="bi bi-play-circle-fill me-2"></i>Inizia Allenamento
+                        </a>
+                        <a th:href="@{/contatti}" class="btn btn-dark btn-lg px-4 py-3 fw-bold rounded-pill shadow-sm mb-3 mb-sm-0 btn-cta-contact">
+                            <i class="bi bi-envelope-fill me-2"></i>Contattaci
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <div th:replace="~{fragments/reviews :: carouselRecensioni}"></div>
+        <div th:replace="~{fragments/footer :: publicFooter}"></div>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>
