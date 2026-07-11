@@ -29,6 +29,7 @@
                             <span class="badge bg-secondary-subtle text-secondary mt-1">ROLE_USER_BASIC</span>
                         </div>
                     </div>
+                </div>
                 <button class="carousel-control-prev" type="button" data-bs-target="#recensioniCarousel" data-bs-slide="prev">
                     <span class="carousel-control-prev-icon bg-dark rounded-circle p-3" aria-hidden="true"></span>
                     <span class="visually-hidden">Previous</span>
@@ -38,17 +39,7 @@
                     <span class="visually-hidden">Next</span>
                 </button>
             </div>
-            <script>
-                {
-                    const myCarousel = document.querySelector('#recensioniCarousel');
-                    if (myCarousel) {
-                        new bootstrap.Carousel(myCarousel, {
-                            interval: 5000, /* 5 Seconds */
-                            wrap: true
-                        });
-                    }
-                }
-            </script>
+            <script th:src="@{/js/recensioni-carousel.js}"></script>
         </section>
     </body>
 </html>
