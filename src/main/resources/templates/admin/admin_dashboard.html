@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      lang="it">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Olympus Fitness - Admin Dashboard</title>
+        <link rel="icon" type="image/svg+xml" th:href="@{/images/OlympusFitness_logo.svg}">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+        <link rel="stylesheet" th:href="@{/css/index.css}">
+        <link rel="stylesheet" th:href="@{/css/navbar.css}">
+
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    </head>
+    <body class="bg-light d-flex flex-column min-vh-100">
+
+        <div th:replace="~{fragments/navbar :: headerNav}"></div>
+
+        <main class="flex-grow-1 position-relative w-100 d-flex align-items-center" style="min-height: 100vh; overflow: hidden;">
+            <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop"
+                 class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover; z-index: -2;" alt="Gym Background">
+            <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.8); z-index: -1;"></div>
+
+            <div class="container text-white" style="padding-top: 8rem; padding-bottom: 4rem;">
+
+                <div th:if="${messaggioRimozione}" class="alert alert-success alert-dismissible fade show border-0 mb-4 shadow" role="alert" style="background-color: #198754; color: white;">
+                    <div class="d-flex align-items-center">
+                        <i class="bi bi-check-circle-fill me-2 fs-5"></i>
+                        <span th:text="${messaggioRimozione}">Messaggio Feedback</span>
+                    </div>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+                    <div>
+                        <h1 class="fw-bold mb-0 text-warning">
+                            <i class="bi bi-shield-lock-fill me-2"></i>Pannello Amministratore
+                        </h1>
+                        <p class="text-white-50 mb-0">
+                            Benvenuto/a, <span class="text-white fw-bold" th:text="${adminUsername}">Admin</span>! Gestione iscritti, resoconti e manutenzione del database
+                        </p>
+                    </div>
+                    <div>
+                        <form th:action="@{/admin/rimuovi-scaduti}" method="post" class="m-0">
+                            <button type="submit" class="btn btn-outline-danger fw-bold rounded-pill shadow-sm">
+                                <i class="bi bi-trash3-fill me-2"></i>Rimuovi Scaduti
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+
+                    <div class="col-12">
+                        <div class="card shadow border-0 rounded-4 bg-white text-dark">
+                            <div class="card-body p-4">
+                                <h3 class="fw-bold mb-3 fs-5 text-dark"><i class="bi bi-people-fill me-2"></i>Elenco Utenti Registrati</h3>
+
+                                <div class="table-responsive">
+                                    <table class="table table-hover align-middle mb-0">
+                                        <thead class="table-dark">
+                                        <tr>
+                                            <th>Username</th>
+                                            <th>Nome</th>
+                                            <th>Cognome</th>
+                                            <th>Email</th>
+                                            <th>Data Iscrizione</th>
+                                            <th>Piano</th>
+                                            <th>Stato</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr th:if="${#lists.isEmpty(listaUtenti)}">
+                                            <td colspan="7" class="text-center text-muted py-4">Nessun utente registrato nel sistema.</td>
+                                        </tr>
+
+                                        <tr th:each="utente : ${listaUtenti}">
+                                            <td class="fw-bold" th:text="${utente.username}">username#team_20</td>
+                                            <td th:text="${utente.nome != null ? utente.nome : '-'}">Nome</td>
+                                            <td th:text="${utente.cognome != null ? utente.cognome : '-'}">Cognome</td>
+                                            <td th:text="${utente.email != null ? utente.email : '-'}">Email</td>
+                                            <td th:text="${utente.data_iscrizione != null ? utente.data_iscrizione : '-'}">2026-01-01</td>
+                                            <td>
+                                                <span th:if="${utente.authority == 'ROLE_ADMIN'}" class="badge bg-dark">Amministratore</span>
+                                                <span th:if="${utente.authority == 'ROLE_USER_PRO'}" class="badge bg-danger">Pro</span>
+                                                <span th:if="${utente.authority == 'ROLE_USER_BASIC'}" class="badge bg-primary">Basic</span>
+                                                <span th:if="${utente.authority == 'ROLE_USER_PROVA'}" class="badge bg-warning text-dark">Prova</span>
+                                                <span th:if="${utente.authority == null}" class="badge bg-secondary">Nessuno</span>
+                                            </td>
+                                            <td>
+                                                <span th:if="${utente.enabled}" class="badge bg-success">Attivo</span>
+                                                <span th:if="${!utente.enabled}" class="badge bg-danger">Disabilitato (Scaduto)</span>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card shadow border-0 rounded-4 bg-white text-dark" style="min-height: 320px;">
+                            <div class="card-body p-4 d-flex flex-column h-100">
+                                <div class="d-flex align-items-center mb-3">
+                                    <i class="bi bi-bar-chart-line-fill text-warning me-2 fs-4"></i>
+                                    <h4 class="fw-bold fs-6 m-0">Statistiche Allenamenti Totali</h4>
+                                </div>
+                                <p class="text-muted small mb-3">Grafico basato sui programmi predefiniti completati dagli iscritti Basic e Pro.</p>
+
+                                <div class="flex-grow-1" style="position: relative; width: 100%; height: 180px;">
+                                    <canvas id="programmiChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card shadow border-0 rounded-4 bg-white text-dark" style="min-height: 320px;">
+                            <div class="card-body p-4 d-flex flex-column justify-content-between">
+                                <div>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <i class="bi bi-calculator text-primary me-2 fs-4"></i>
+                                        <h4 class="fw-bold fs-6 m-0">Media Allenamenti per Ruolo</h4>
+                                    </div>
+                                    <p class="text-muted small mb-4">Conteggio matematico calcolato via DB sul rapporto sessioni / iscritti attivi.</p>
+                                </div>
+
+                                <div class="row g-3 align-items-center mb-2">
+                                    <div class="col-6">
+                                        <div class="p-3 rounded-3 text-center" style="background-color: #f8f9fa; border-top: 4px solid #0d6efd;">
+                                            <span class="badge bg-primary mb-2">Piano Basic</span>
+                                            <h2 class="fw-bold text-dark m-0" th:text="${#numbers.formatDecimal(mediaBasic, 1, 1)}">0.0</h2>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="p-3 rounded-3 text-center" style="background-color: #f8f9fa; border-top: 4px solid #dc3545;">
+                                            <span class="badge bg-danger mb-2">Piano Pro</span>
+                                            <h2 class="fw-bold text-dark m-0" th:text="${#numbers.formatDecimal(mediaPro, 1, 1)}">0.0</h2>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <div th:replace="~{fragments/reviews :: carouselRecensioni}"></div>
+        <div th:replace="~{fragments/footer :: publicFooter}"></div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script th:inline="javascript">
+            // "/* ... */" is the official thymeleaf syntax for injecting thymeleaf variables inside javascript without breaking everything
+            const labelsProgrammi = /*[[${programmiLabels}]]*/ ['Full Body', 'Push/Pull/Legs', 'Cardio', 'Strength'];
+            const datiProgrammi = /*[[${programmiValori}]]*/ [0, 0, 0, 0];
+
+            const ctx = document.getElementById('programmiChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labelsProgrammi,
+                    datasets: [{
+                        label: 'Sessioni totali',
+                        data: datiProgrammi,
+                        backgroundColor: 'rgba(243, 176, 7, 0.75)', // Golden yellow
+                        borderColor: '#f3b007',
+                        borderWidth: 1.5,
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false } // Hiding useless legend to optimize space
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: {
+                            beginAtZero: true,
+                            ticks: { stepSize: 1 },
+                            grid: { color: '#eaeaea' }
+                        }
+                    }
+                }
+            });
+        </script>
+    </body>
+</html>
