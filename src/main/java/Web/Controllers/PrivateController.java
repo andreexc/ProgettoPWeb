@@ -1,12 +1,15 @@
 package Web.Controllers;
 
 import Web.Services.AdminService;
+import Web.Services.UserService;
+import Web.Services.StatisticsService; // Iniettato correttamente per i grafici utente
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -16,13 +19,15 @@ import java.util.Map;
 public class PrivateController {
 
     private final AdminService adminService;
+    private final UserService userService;
+    private final StatisticsService statisticsService;
 
-    // Injecting service
-    public PrivateController(AdminService adminService) {
+    public PrivateController(AdminService adminService, UserService userService, StatisticsService statisticsService) {
         this.adminService = adminService;
+        this.userService = userService;
+        this.statisticsService = statisticsService;
     }
 
-    /* Post-Login dispatcher. Redirects by the user role to the right page */
     @GetMapping("/dashboard")
     public String dispatchUserByRole(Authentication authentication) {
         if (authentication == null) {
@@ -45,46 +50,131 @@ public class PrivateController {
 
     @GetMapping("/admin/home")
     public String adminHome(Model model, Authentication authentication) {
-        // Welcome message
         if (authentication != null) {
             model.addAttribute("adminUsername", authentication.getName());
         }
-
-        // Ordered list
         List<Map<String, Object>> utenti = adminService.ottieniListaUtenti();
         model.addAttribute("listaUtenti", utenti);
-
         return "admin/admin_dashboard";
     }
 
     @PostMapping("/admin/rimuovi-scaduti")
     public String rimuoviScaduti(RedirectAttributes redirectAttributes) {
-        // Remove disabled users
         int utentiRimossi = adminService.rimuoviUtentiScaduti();
-
-
-        // RedirectAttributes (FlashAttribute) grants to send the feedback message through a redirect
-        // so thymeleaf can read it when building the template after the redirect
         redirectAttributes.addFlashAttribute("messaggioRimozione",
                 "Operazione completata. Sono stati rimossi " + utentiRimossi + " utenti scaduti.");
-
         return "redirect:/admin/home";
     }
 
     // --- user routes ---
 
+    @GetMapping("/dashboard/prova/home")
+    public String provaHome(Model model, Authentication authentication) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            model.addAttribute("usernameUtente", username);
+
+            int completati = userService.getConteggioAllenamenti(username);
+            model.addAttribute("allenamentiSvolti", completati);
+        }
+        return "private/prova_dashboard";
+    }
+
     @GetMapping("/dashboard/basic/home")
     public String basicHome(Model model, Authentication authentication) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            model.addAttribute("usernameUtente", username);
+
+            Map<String, Integer> statsPersonali = statisticsService.getAllenamentiUtentePerProgramma(username);
+            model.addAttribute("statsLabels", statsPersonali.keySet());
+            model.addAttribute("statsValori", statsPersonali.values());
+        }
         return "private/basic_dashboard";
     }
 
     @GetMapping("/dashboard/pro/home")
     public String proHome(Model model, Authentication authentication) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            model.addAttribute("usernameUtente", username);
+
+            // Usa lo stesso servizio anche per l'utente PRO
+            Map<String, Integer> statsPersonali = statisticsService.getAllenamentiUtentePerProgramma(username);
+            model.addAttribute("statsLabels", statsPersonali.keySet());
+            model.addAttribute("statsValori", statsPersonali.values());
+        }
         return "private/pro_dashboard";
     }
 
-    @GetMapping("/dashboard/prova/home")
-    public String provaHome(Model model, Authentication authentication) {
-        return "private/prova_dashboard";
+    // --- utility shared routes ---
+
+    @GetMapping("/dashboard/profilo")
+    public String visualizzaProfilo(Model model, Authentication authentication) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            Map<String, Object> profilo = userService.ottieniProfilo(username);
+
+            model.addAttribute("usernameUtente", username);
+            model.addAttribute("nome", profilo.get("nome"));
+            model.addAttribute("cognome", profilo.get("cognome"));
+            model.addAttribute("email", profilo.get("email"));
+            model.addAttribute("dataNascita", profilo.get("data_nascita"));
+            model.addAttribute("ruolo", profilo.get("authority"));
+        }
+        return "private/profilo";
+    }
+
+    @GetMapping("/dashboard/cambio-password")
+    public String cambioPasswordForm() {
+        return "private/cambio_password";
+    }
+
+    @PostMapping("/dashboard/cambio-password")
+    public String eseguiCambioPassword(@RequestParam String nuovaPassword,
+                                       Authentication authentication,
+                                       RedirectAttributes redirectAttributes) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            boolean successo = userService.cambiaPassword(username, nuovaPassword);
+
+            if (successo) {
+                redirectAttributes.addFlashAttribute("messaggioSuccesso", "Password aggiornata!");
+            } else {
+                redirectAttributes.addFlashAttribute("messaggioErrore", "Impossibile aggiornare la password.");
+            }
+        }
+        return "redirect:/dashboard";
+    }
+
+    @GetMapping("/dashboard/upgrade")
+    public String upgradeForm() {
+        return "private/upgrade";
+    }
+
+    @PostMapping("/dashboard/upgrade")
+    public String eseguiUpgrade(@RequestParam String pianoScelto,
+                                Authentication authentication,
+                                RedirectAttributes redirectAttributes) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            boolean successo = userService.eseguiUpgrade(username, pianoScelto);
+            if (successo) {
+                redirectAttributes.addFlashAttribute("messaggioUpgrade", "Upgrade completato! Effettua di nuovo il login.");
+                return "redirect:/login?logout";
+            }
+        }
+        redirectAttributes.addFlashAttribute("messaggioErrore", "Errore nell'upgrade.");
+        return "redirect:/dashboard/upgrade";
+    }
+
+    @GetMapping("/dashboard/allenamento")
+    public String visualizzaAllenamenti() {
+        return "private/allenamenti_lista";
+    }
+
+    @GetMapping("/dashboard/inserisci-programma")
+    public String inserisciProgrammaForm() {
+        return "private/inserisci_programma";
     }
 }

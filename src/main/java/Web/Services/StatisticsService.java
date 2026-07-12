@@ -25,7 +25,7 @@ public class StatisticsService {
                      "WHERE a.authority IN ('ROLE_USER_BASIC', 'ROLE_USER_PRO') " +
                      "GROUP BY c.id_programma";
 
-        // LinkedHashMap per mantenere l'ordine dei programmi nell'istogramma
+        // LinkedHashMap mantains the order of the histogram
         Map<String, Integer> stats = new LinkedHashMap<>();
         stats.put("Full Body", 0);
         stats.put("Push/Pull/Legs", 0);
@@ -76,5 +76,35 @@ public class StatisticsService {
         medie.put("PRO", mediaPro != null ? mediaPro : 0.0);
 
         return medie;
+    }
+
+    /* Basic and Pro plans statistics */
+    public Map<String, Integer> getAllenamentiUtentePerProgramma(String username) {
+        String sql = "SELECT c.id_programma, COUNT(*) as totale " +
+                "FROM completed c " +
+                "JOIN users u ON c.id_utente = u.id " +
+                "WHERE u.username = ? " +
+                "GROUP BY c.id_programma";
+
+        // Base programs
+        Map<String, Integer> stats = new LinkedHashMap<>();
+        stats.put("Full Body", 0);
+        stats.put("Push/Pull/Legs", 0);
+        stats.put("Cardio", 0);
+        stats.put("Strength", 0);
+
+        jdbcTemplate.query(sql, rs -> {
+            long idProgramma = rs.getLong("id_programma");
+            int totale = rs.getInt("totale");
+
+            switch ((int) idProgramma) {
+                case 1 -> stats.put("Full Body", totale);
+                case 2 -> stats.put("Push/Pull/Legs", totale);
+                case 3 -> stats.put("Cardio", totale);
+                case 4 -> stats.put("Strength", totale);
+            }
+        }, username);
+
+        return stats;
     }
 }
