@@ -18,10 +18,10 @@ public class AdminService {
 
     /* Get the list of users ordered as requested in the assignment */
     public List<Map<String, Object>> ottieniListaUtenti() {
-        // Prendiamo i dati anagrafici da user_details e il piano/ruolo REALE da authorities
-        String sql = "SELECT d.username, d.nome, d.cognome, d.email, d.data_iscrizione, a.authority " +
-                "FROM user_details d " +
-                "JOIN authorities a ON d.username = a.username";
+        String sql = "SELECT u.username, d.nome, d.cognome, d.email, d.data_iscrizione, a.authority, u.enabled " +
+                "FROM users u " +
+                "JOIN authorities a ON u.username = a.username " +
+                "LEFT JOIN user_details d ON u.username = d.username";
         return jdbcTemplate.queryForList(sql);
     }
     /* removes not enabled users and returns the number of how many got removed */
