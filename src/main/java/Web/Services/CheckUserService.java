@@ -43,16 +43,14 @@ public class CheckUserService {
         String sqlAuth = "INSERT INTO authorities (username, authority) VALUES (?, ?)";
         jdbcTemplate.update(sqlAuth, signupForm.getUsername(), authorityString);
 
-        String sqlDetails = "INSERT INTO user_details (username, nome, cognome, data_nascita, email, data_iscrizione, piano_allenamento, allenamenti_completati) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sqlDetails = "INSERT INTO user_details (username, nome, cognome, data_nascita, email, data_iscrizione) VALUES (?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sqlDetails,
                 signupForm.getUsername(),
                 signupForm.getNome(),
                 signupForm.getCognome(),
                 signupForm.getDataNascita(),
                 signupForm.getEmail(),
-                java.sql.Date.valueOf(LocalDate.now()), // As requested in the assignment
-                signupForm.getPianoAllenamento(),
-                0
+                java.sql.Date.valueOf(LocalDate.now())
         );
 
         return true;

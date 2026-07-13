@@ -23,15 +23,14 @@ CREATE TABLE IF NOT EXISTS authorities (
 
 -- User infos table
 CREATE TABLE IF NOT EXISTS user_details (
-    id BIGINT PRIMARY KEY,
+    username VARCHAR(50) PRIMARY KEY, -- not an id as primary for joins
     nome VARCHAR(50) NOT NULL,
     cognome VARCHAR(50) NOT NULL,
     data_nascita DATE NOT NULL,
     email VARCHAR(100) NOT NULL,
     data_iscrizione DATE NOT NULL,
-    piano_allenamento VARCHAR(20) NOT NULL,
-    CONSTRAINT fk_details_users FOREIGN KEY(id) REFERENCES users(id)
-);
+    CONSTRAINT fk_details_users FOREIGN KEY(username) REFERENCES users(username)
+    );
 
 
 CREATE TABLE IF NOT EXISTS personal_programs (

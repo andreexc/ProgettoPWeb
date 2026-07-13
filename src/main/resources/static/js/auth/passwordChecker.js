@@ -17,8 +17,8 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // checks password length and id_20
-        if (password.value.length != 8 || !password.value.includes("id_20")) {
-            console.log("error");g
+        if (password.value.length !== 8 || !password.value.includes("id_20")) {
+            console.log("error");
             error.classList.remove('d-none');
             hasError = true;
         } else {

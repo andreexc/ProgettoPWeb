@@ -47,7 +47,6 @@ public class PrivateController {
     }
 
     // --- admin routes ---
-
     @GetMapping("/admin/home")
     public String adminHome(Model model, Authentication authentication) {
         if (authentication != null) {
@@ -67,14 +66,13 @@ public class PrivateController {
     }
 
     // --- user routes ---
-
     @GetMapping("/dashboard/prova/home")
     public String provaHome(Model model, Authentication authentication) {
         if (authentication != null) {
             String username = authentication.getName();
             model.addAttribute("usernameUtente", username);
 
-            int completati = userService.getConteggioAllenamenti(username);
+            int completati = statisticsService.getConteggioAllenamenti(username);
             model.addAttribute("allenamentiSvolti", completati);
         }
         return "private/prova_dashboard";
@@ -99,7 +97,6 @@ public class PrivateController {
             String username = authentication.getName();
             model.addAttribute("usernameUtente", username);
 
-            // Usa lo stesso servizio anche per l'utente PRO
             Map<String, Integer> statsPersonali = statisticsService.getAllenamentiUtentePerProgramma(username);
             model.addAttribute("statsLabels", statsPersonali.keySet());
             model.addAttribute("statsValori", statsPersonali.values());
@@ -108,7 +105,6 @@ public class PrivateController {
     }
 
     // --- utility shared routes ---
-
     @GetMapping("/dashboard/profilo")
     public String visualizzaProfilo(Model model, Authentication authentication) {
         if (authentication != null) {
@@ -118,33 +114,48 @@ public class PrivateController {
             model.addAttribute("usernameUtente", username);
             model.addAttribute("nome", profilo.get("nome"));
             model.addAttribute("cognome", profilo.get("cognome"));
-            model.addAttribute("email", profilo.get("email"));
             model.addAttribute("dataNascita", profilo.get("data_nascita"));
-            model.addAttribute("ruolo", profilo.get("authority"));
+
+            String ruoloRaw = (String) profilo.get("authority");
+            String ruoloPulito = "PROVA";
+
+            if (ruoloRaw != null) {
+                if (ruoloRaw.startsWith("ROLE_USER_")) {
+                    ruoloPulito = ruoloRaw.replace("ROLE_USER_", "");
+                } else if (ruoloRaw.equals("ROLE_ADMIN")) {
+                    ruoloPulito = "ADMIN";
+                }
+            }
+            model.addAttribute("ruolo", ruoloPulito);
         }
         return "private/profilo";
     }
 
     @GetMapping("/dashboard/cambio-password")
-    public String cambioPasswordForm() {
+    public String cambioPasswordForm(Model model, Authentication authentication) {
+        if (authentication != null) {
+            model.addAttribute("usernameUtente", authentication.getName());
+        }
         return "private/cambio_password";
     }
 
     @PostMapping("/dashboard/cambio-password")
-    public String eseguiCambioPassword(@RequestParam String nuovaPassword,
+    public String eseguiCambioPassword(@RequestParam String vecchiaPassword,
+                                       @RequestParam String nuovaPassword,
                                        Authentication authentication,
                                        RedirectAttributes redirectAttributes) {
         if (authentication != null) {
             String username = authentication.getName();
-            boolean successo = userService.cambiaPassword(username, nuovaPassword);
+            boolean successo = userService.cambiaPassword(username, vecchiaPassword, nuovaPassword);
 
             if (successo) {
-                redirectAttributes.addFlashAttribute("messaggioSuccesso", "Password aggiornata!");
+                redirectAttributes.addFlashAttribute("messaggioSuccesso", "Password aggiornata con successo!");
+                return "redirect:/dashboard";
             } else {
-                redirectAttributes.addFlashAttribute("messaggioErrore", "Impossibile aggiornare la password.");
+                redirectAttributes.addFlashAttribute("messaggioErrore", "La vecchia password inserita non è corretta.");
             }
         }
-        return "redirect:/dashboard";
+        return "redirect:/dashboard/cambio-password";
     }
 
     @GetMapping("/dashboard/upgrade")

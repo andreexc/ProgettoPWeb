@@ -19,13 +19,12 @@ public class StatisticsService {
     /* Counts how many times a base program is completed */
     public Map<String, Integer> getAllenamentiTotaliPerProgramma() {
         String sql = "SELECT c.id_programma, COUNT(*) as totale " +
-                     "FROM completed c " +
-                     "JOIN users u ON c.id_utente = u.id " +
-                     "JOIN authorities a ON u.username = a.username " +
-                     "WHERE a.authority IN ('ROLE_USER_BASIC', 'ROLE_USER_PRO') " +
-                     "GROUP BY c.id_programma";
+                "FROM completed c " +
+                "JOIN users u ON c.id_utente = u.id " +
+                "JOIN authorities a ON u.username = a.username " +
+                "WHERE a.authority IN ('ROLE_USER_BASIC', 'ROLE_USER_PRO') " +
+                "GROUP BY c.id_programma";
 
-        // LinkedHashMap mantains the order of the histogram
         Map<String, Integer> stats = new LinkedHashMap<>();
         stats.put("Full Body", 0);
         stats.put("Push/Pull/Legs", 0);
@@ -36,7 +35,6 @@ public class StatisticsService {
             long idProgramma = rs.getLong("id_programma");
             int totale = rs.getInt("totale");
 
-            // For base program we assume the first IDs
             switch ((int) idProgramma) {
                 case 1 -> stats.put("Full Body", totale);
                 case 2 -> stats.put("Push/Pull/Legs", totale);
@@ -52,7 +50,6 @@ public class StatisticsService {
     public Map<String, Double> getMediaAllenamentiPerRuolo() {
         Map<String, Double> medie = new HashMap<>();
 
-        // NULLIF protects the logic if there is no user for that role
         // BASIC MEMBERS
         String sqlBasic =
                 "SELECT CAST(COUNT(c.id) AS DOUBLE) / NULLIF((SELECT COUNT(*) FROM authorities WHERE authority = 'ROLE_USER_BASIC'), 0) " +
@@ -86,7 +83,6 @@ public class StatisticsService {
                 "WHERE u.username = ? " +
                 "GROUP BY c.id_programma";
 
-        // Base programs
         Map<String, Integer> stats = new LinkedHashMap<>();
         stats.put("Full Body", 0);
         stats.put("Push/Pull/Legs", 0);
@@ -106,5 +102,15 @@ public class StatisticsService {
         }, username);
 
         return stats;
+    }
+
+    /* Calculates the number of programs completed given the user (useful for the X/3 format) */
+    public int getConteggioAllenamenti(String username) {
+        String sql = "SELECT COUNT(*) FROM completed c " +
+                "JOIN users u ON c.id_utente = u.id " +
+                "WHERE u.username = ?";
+
+        Integer conteggio = jdbcTemplate.queryForObject(sql, Integer.class, username);
+        return conteggio != null ? conteggio : 0;
     }
 }

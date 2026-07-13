@@ -20,41 +20,42 @@ public class UserService {
 
     /* Retrieve users personal data */
     public Map<String, Object> ottieniProfilo(String username) {
-        String sql = "SELECT u.username, d.nome, d.cognome, d.email, d.data_nascita, a.authority " +
-                "FROM users u " +
-                "JOIN user_details d ON u.username = d.username " +
-                "JOIN authorities a ON u.username = a.username " +
-                "WHERE u.username = ?";
-
+        String sql = "SELECT d.nome, d.cognome, d.data_nascita, a.authority " +
+                "FROM user_details d " +
+                "JOIN authorities a ON d.username = a.username " +
+                "WHERE d.username = ?";
         try {
             return jdbcTemplate.queryForMap(sql, username);
         } catch (Exception e) {
-            // Returns empty map so the page rendering doesn't crash
-            return Map.of();
+            return Map.of(
+                    "nome", "Non", "cognome", "Disponibile",
+                    "data_nascita", java.sql.Date.valueOf(java.time.LocalDate.now()),
+                    "authority", "ROLE_USER_PROVA"
+            );
         }
     }
 
-    /* Calculate the number of completed programs (useful for the X/3 format) */
-    public int getConteggioAllenamenti(String username) {
-        String sql = "SELECT COUNT(*) FROM completed c " +
-                "JOIN users u ON c.id_utente = u.id " +
-                "WHERE u.username = ?";
-
-        Integer conteggio = jdbcTemplate.queryForObject(sql, Integer.class, username);
-        return conteggio != null ? conteggio : 0;
-    }
-
-    /* Modifies the user's password (Transactional tab is a must) */
+    /* Modifies the user's password (Transactional tag is a must) */
     @Transactional
-    public boolean cambiaPassword(String username, String nuovaPassword) {
-        String passwordCriptata = passwordEncoder.encode(nuovaPassword);
-        String sql = "UPDATE users SET password = ? WHERE username = ?";
+    public boolean cambiaPassword(String username, String vecchiaPassword, String nuovaPassword) {
+        String sqlGetPass = "SELECT password FROM users WHERE username = ?";
+        String currentPasswordHash;
+        try {
+            currentPasswordHash = jdbcTemplate.queryForObject(sqlGetPass, String.class, username);
+        } catch (Exception e) {
+            return false;
+        }
 
-        int righeModificate = jdbcTemplate.update(sql, passwordCriptata, username);
-        return righeModificate > 0;
+        if (currentPasswordHash == null || !passwordEncoder.matches(vecchiaPassword, currentPasswordHash)) {
+            return false;
+        }
+
+        String nuovaPasswordHash = passwordEncoder.encode(nuovaPassword);
+        String sqlUpdate = "UPDATE users SET password = ? WHERE username = ?";
+        return jdbcTemplate.update(sqlUpdate, nuovaPasswordHash, username) > 0;
     }
 
-    /* Changes the authority (role) of an user (it also re-enable the user because we can see the upgrade also as a subscription renewal*/
+    /* Changes the authority (role) of a user (it also re-enable the user because we can see the upgrade also as a subscription renewal*/
     @Transactional
     public boolean eseguiUpgrade(String username, String nuovoPiano) {
         String nuovaAuthority = switch (nuovoPiano.toUpperCase()) {
@@ -67,11 +68,9 @@ public class UserService {
             return false;
         }
 
-        // Authority update
         String sqlAuthority = "UPDATE authorities SET authority = ? WHERE username = ?";
         int updateAuth = jdbcTemplate.update(sqlAuthority, nuovaAuthority, username);
 
-        // If the user had a trial plan we make sure he got enabled again
         String sqlAbilita = "UPDATE users SET enabled = true WHERE username = ?";
         jdbcTemplate.update(sqlAbilita, username);
 
