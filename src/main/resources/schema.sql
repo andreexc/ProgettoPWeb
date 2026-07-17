@@ -17,9 +17,8 @@ CREATE TABLE IF NOT EXISTS authorities (
      id BIGINT AUTO_INCREMENT PRIMARY KEY,
      username VARCHAR(50) NOT NULL,
      authority VARCHAR(50) NOT NULL,
-     CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username)
+     CONSTRAINT fk_authorities_users FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE
 );
-
 
 -- User infos table
 CREATE TABLE IF NOT EXISTS user_details (
@@ -29,17 +28,8 @@ CREATE TABLE IF NOT EXISTS user_details (
     data_nascita DATE NOT NULL,
     email VARCHAR(100) NOT NULL,
     data_iscrizione DATE NOT NULL,
-    CONSTRAINT fk_details_users FOREIGN KEY(username) REFERENCES users(username)
+    CONSTRAINT fk_details_users FOREIGN KEY(username) REFERENCES users(username) ON DELETE CASCADE
     );
-
-
-CREATE TABLE IF NOT EXISTS personal_programs (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_utente BIGINT NOT NULL,
-    id_programma BIGINT NOT NULL UNIQUE,
-    nome_allenamento VARCHAR(100) NOT NULL,
-    CONSTRAINT fk_programs_users FOREIGN KEY(id_utente) REFERENCES users(id)
-);
 
 -- Log table for completed excercises
 CREATE TABLE IF NOT EXISTS completed (
@@ -47,14 +37,14 @@ CREATE TABLE IF NOT EXISTS completed (
     id_utente BIGINT NOT NULL,
     id_programma BIGINT NOT NULL,
     data DATE NOT NULL,
-    CONSTRAINT fk_completed_user FOREIGN KEY(id_utente) REFERENCES users(id)
+    CONSTRAINT fk_completed_user FOREIGN KEY(id_utente) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Review table
-CREATE TABLE IF NOT EXISTS reviews (
+-- review tab
+CREATE TABLE IF NOT EXISTS recensioni (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    id_user BIGINT NOT NULL,
-    testo_recensione TEXT NOT NULL,
-    data_recensione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT fk_reviews_users FOREIGN KEY(id_user) REFERENCES users(id)
-);
+    username VARCHAR(50) NOT NULL,
+    testo VARCHAR(1000),
+    data_creazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_recensioni_users FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
+    );

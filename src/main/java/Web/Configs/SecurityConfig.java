@@ -45,7 +45,9 @@ public class SecurityConfig {
             .authorizeHttpRequests(authorize -> authorize
                 // Public Routes
                 .requestMatchers("/", "/index", "/login", "/signup", "/logout", "/registration-success").permitAll()
-                .requestMatchers("/css/**", "/js/**", "/images/**", "/webjars/**").permitAll() // Risorse statiche
+                .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // Risorse statiche
+
+                .requestMatchers("/dashboard/recensioni/api/carosello").permitAll()
 
                 // Proteced Routes
                 // Spring Security search the role and in its logics appends "ROLE_"
@@ -80,7 +82,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler customAuthenticationFailureHandler() {
         return (request, response, exception) -> {
-            String errorMessage = "Username o password errati. Riprova.";
+            String errorMessage = "#20: That user is not authenticated!"; // as requested in the assignment
             request.getSession().setAttribute("securityErrorMessage", errorMessage); // session is readable by the controller
             // Login redirect with error set
             response.sendRedirect("/login?error=true");

@@ -1,0 +1,25 @@
+<div th:fragment="reviewComponent" class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-lg border-0 rounded-4 bg-white p-4">
+                <h5 class="fw-bold mb-3 text-dark text-center">Cosa dicono i nostri atleti</h5>
+
+                <div id="carouselExample" class="carousel slide" data-bs-ride="false">
+                    <div id="carouselWrapper" class="carousel-inner text-dark">
+                        <!-- Here the JS loaded reviews will take place -->
+                    </div>
+
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="visually-hidden">Precedente</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+                        <span class="carousel-control-next-icon bg-dark rounded-circle" aria-hidden="true"></span>
+                        <span class="visually-hidden">Successivo</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{/js/reviews/reviewHandler.js}"></script>
+</div>

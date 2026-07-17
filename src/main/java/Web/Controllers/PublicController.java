@@ -48,7 +48,7 @@ public class PublicController {
                 request.getSession().removeAttribute("securityErrorMessage");
             } else {
                 // fallback in case the session expires
-                model.addAttribute("loginError", "Username o password errati. Riprova.");
+                model.addAttribute("loginError",  "#20: That user is not authenticated!");
             }
         }
         model.addAttribute("loginForm", new LoginForm());

@@ -1,0 +1,8 @@
+<div th:fragment="carouselRecensioni" class="carousel-inner">
+    <div th:each="rev, iter : ${recensioni}"
+         th:classappend="${iter.index == 0} ? 'active' : ''"
+         class="carousel-item p-4 text-center">
+        <h5 class="fw-bold" th:text="${rev.username}"></h5>
+        <p class="fs-5 fst-italic" th:text="${rev.testo}"></p>
+    </div>
+</div>
