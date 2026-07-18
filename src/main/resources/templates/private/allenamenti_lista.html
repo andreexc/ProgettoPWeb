@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Olympus Fitness - Allenamenti</title>
+    <link rel="icon" type="image/svg+xml" th:href="@{/images/OlympusFitness_logo.svg}">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/index.css}">
+    <link rel="stylesheet" th:href="@{/css/navbar.css}">
+
+    <!-- csrf meta tag necessario per l'invio dell'allenamento -->
+    <meta name="_csrf" th:content="${_csrf.token}"/>
+    <meta name="_csrf_header" th:content="${_csrf.headerName}"/>
+
+    <style>
+        .workout-card {
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+        .workout-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 .75rem 1.5rem rgba(0,0,0,.15) !important;
+        }
+        .kcal-badge {
+            font-size: 1rem;
+        }
+        .exercise-row:not(:last-child) {
+            border-bottom: 1px solid #eee;
+        }
+        .exercise-name {
+            font-weight: 600;
+        }
+        .exercise-meta {
+            font-size: .85rem;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-light d-flex flex-column min-vh-100">
+
+<div th:replace="~{fragments/navbar :: headerNav}"></div>
+
+<main class="flex-grow-1 position-relative w-100" style="min-height: 100vh; overflow: hidden;">
+    <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1000&auto=format&fit=crop"
+         class="position-absolute top-0 start-0 w-100 h-100" style="object-fit: cover; z-index: -2;" alt="Gym Background">
+    <div class="position-absolute top-0 start-0 w-100 h-100" style="background: rgba(0, 0, 0, 0.85); z-index: -1;"></div>
+
+    <div class="container text-white" style="padding-top: 8rem; padding-bottom: 4rem;">
+        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+            <div>
+                <h1 class="fw-bold mb-0 text-warning"><i class="bi bi-clipboard2-pulse-fill me-2"></i>I Tuoi Allenamenti</h1>
+                <p class="text-white-50 mb-0">Scegli l'allenamento da iniziare</p>
+            </div>
+        </div>
+
+        <!-- Caso in cui non c'è nessun allenamento disponibile -->
+        <!-- Non dovrebbe comunque essere utilizzato perché ci sono gli allenamenti di base, ma utile per testing -->
+        <div th:if="${#lists.isEmpty(listaAllenamenti)}" class="card shadow border-0 rounded-4 bg-white text-dark p-5 text-center">
+            <i class="bi bi-clipboard-x display-4 text-secondary mb-3"></i>
+            <h5 class="fw-bold">Nessun allenamento disponibile</h5>
+            <p class="text-secondary mb-0">Al momento non ci sono allenamenti assegnati al tuo profilo.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-lg-6" th:each="allenamento : ${listaAllenamenti}">
+                <div class="card workout-card shadow border-0 rounded-4 bg-white text-dark p-4 h-100 d-flex flex-column">
+
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h5 class="fw-bold mb-0" th:text="${allenamento.nomeProgramma}">Nome Allenamento</h5>
+                        <span class="badge bg-danger kcal-badge rounded-pill px-3 py-2">
+                            <i class="bi bi-fire me-1"></i><span th:text="${allenamento.kcalTotali}">0</span> kcal
+                        </span>
+                    </div>
+
+                    <div class="flex-grow-1 mb-3">
+                        <div class="exercise-row d-flex justify-content-between align-items-center py-2"
+                             th:each="esercizio : ${allenamento.esercizi}">
+                            <span class="exercise-name"><i class="bi bi-dot text-primary"></i><span th:text="${esercizio.esercizio}">Esercizio</span></span>
+                            <span class="exercise-meta text-secondary">
+                                <span th:text="${esercizio.nSerie}">3</span> x <span th:text="${esercizio.nRipetizioni}">12</span>
+                            </span>
+                        </div>
+                    </div>
+
+                    <form th:attr="data-allenamento-id=${allenamento.id}" class="avviaAllenamentoForm"
+                          onsubmit="event.preventDefault(); avviaAllenamento(this.dataset.allenamentoId);">
+                        <button type="submit" class="btn btn-primary fw-bold w-100 rounded-pill">
+                            <i class="bi bi-play-btn-fill me-2"></i>Allenamento
+                        </button>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<div th:replace="~{fragments/footer :: publicFooter}"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
+
+<script th:inline="javascript" defer>
+    function avviaAllenamento(idAllenamento) {
+        const csrfToken = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+        const csrfHeader = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+        fetch('/dashboard/allenamento/avvia', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                [csrfHeader]: csrfToken
+            },
+            body: JSON.stringify({ id: idAllenamento })
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Errore durante l\'invio dell\'allenamento');
+                }
+                return response.json().catch(() => null);
+            })
+            .then(() => {
+                window.location.href = '/dashboard/allenamento/' + idAllenamento;
+            })
+            .catch(error => {
+                console.error(error);
+                alert('Impossibile avviare l\'allenamento. Riprova.');
+            });
+    }
+</script>
+</body>
+</html>

@@ -14,6 +14,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
+import Web.Clients.ProgramClient;
+
+import Web.Controllers.DTO.Training.Programma;
 
 @Controller
 public class PrivateController {
@@ -21,11 +24,13 @@ public class PrivateController {
     private final AdminService adminService;
     private final UserService userService;
     private final StatisticsService statisticsService;
+    private final ProgramClient programClient;
 
-    public PrivateController(AdminService adminService, UserService userService, StatisticsService statisticsService) {
+    public PrivateController(AdminService adminService, UserService userService, StatisticsService statisticsService, ProgramClient programClient) {
         this.adminService = adminService;
         this.userService = userService;
         this.statisticsService = statisticsService;
+        this.programClient = programClient;
     }
 
     @GetMapping("/dashboard")
@@ -180,7 +185,12 @@ public class PrivateController {
     }
 
     @GetMapping("/dashboard/allenamento")
-    public String visualizzaAllenamenti() {
+    public String visualizzaAllenamenti(Model model) {
+
+        List<Programma> listaAllenamenti = programClient.getPublicPrograms();
+
+        model.addAttribute("listaAllenamenti", listaAllenamenti);
+
         return "private/allenamenti_lista";
     }
 
