@@ -122,4 +122,23 @@ public class StatisticsService {
         int insertedRows = jdbcTemplate.update(sql, programID, username);
         return insertedRows > 0;
     }
+
+    // Used to add also personalized trainings in pro users chart
+    public Map<Long, Integer> getAllenamentiPersonalizzatiUtente(String username) {
+        String sql = "SELECT c.id_programma, COUNT(*) as totale " +
+                "FROM completed c " +
+                "JOIN users u ON c.id_utente = u.id " +
+                "WHERE u.username = ?" +
+                "GROUP BY c.id_programma";
+
+        Map<Long, Integer> stats = new LinkedHashMap<>();
+
+        jdbcTemplate.query(sql, rs -> {
+            Long idProgramma = rs.getLong("id_programma");
+            int totale = rs.getInt("totale");
+            stats.put(idProgramma, totale);
+        }, username);
+
+        return stats;
+    }
 }

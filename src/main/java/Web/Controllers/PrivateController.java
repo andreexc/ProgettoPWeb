@@ -109,10 +109,25 @@ public class PrivateController {
         if (authentication != null) {
             String username = authentication.getName();
             model.addAttribute("usernameUtente", username);
-
             Map<String, Integer> statsPersonali = statisticsService.getAllenamentiUtentePerProgramma(username);
-            model.addAttribute("statsLabels", statsPersonali.keySet());
-            model.addAttribute("statsValori", statsPersonali.values());
+
+            List<String> labels = new ArrayList<>(statsPersonali.keySet());
+            List<Integer> valori = new ArrayList<>(statsPersonali.values());
+
+            List<Long> idProgrammiPersonali = programUserService.getIdProgrammiUtente(username);
+
+            if (!idProgrammiPersonali.isEmpty()) {
+                List<ProgramSummary> programmiPersonali = restClient.getProgramNamesByIds(idProgrammiPersonali);
+                Map<Long, Integer> allenamentiCompletati = statisticsService.getAllenamentiPersonalizzatiUtente(username);
+
+                for (ProgramSummary programma : programmiPersonali) {
+                    labels.add(programma.getNomeProgramma());
+                    valori.add(allenamentiCompletati.getOrDefault(programma.getId(), 0));
+                }
+            }
+
+            model.addAttribute("statsLabels", labels);
+            model.addAttribute("statsValori", valori);
         }
         return "private/pro_dashboard";
     }
