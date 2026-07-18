@@ -49,3 +49,11 @@ CREATE TABLE IF NOT EXISTS recensioni (
     data_creazione TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_recensioni_users FOREIGN KEY (username) REFERENCES users(username) ON DELETE CASCADE
     );
+
+-- personalized programs for pro users
+CREATE TABLE IF NOT EXISTS programma_utente (
+                                                id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                                id_utente BIGINT NOT NULL,
+                                                id_programma BIGINT NOT NULL,
+                                                CONSTRAINT fk_programma_utente_user FOREIGN KEY (id_utente) REFERENCES users(id) ON DELETE CASCADE
+    );

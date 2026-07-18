@@ -1,6 +1,8 @@
 package Web.Controllers;
 
+import Web.Controllers.DTO.Training.Personalized.EsercizioSceltaMultipla;
 import Web.Services.AdminService;
+import Web.Services.ProgramUserService;
 import Web.Services.UserService;
 import Web.Services.StatisticsService;
 import org.springframework.security.core.Authentication;
@@ -15,8 +17,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.Map;
-import Web.Clients.ProgramClient;
+import java.util.ArrayList;
+import Web.Clients.RestClient;
 import Web.Controllers.DTO.Training.ProgramSummary;
+import Web.Controllers.DTO.Training.Personalized.*;
 
 import Web.Controllers.DTO.Training.Programma;
 
@@ -26,13 +30,15 @@ public class PrivateController {
     private final AdminService adminService;
     private final UserService userService;
     private final StatisticsService statisticsService;
-    private final ProgramClient programClient;
+    private final RestClient restClient;
+    private final ProgramUserService programUserService;
 
-    public PrivateController(AdminService adminService, UserService userService, StatisticsService statisticsService, ProgramClient programClient) {
+    public PrivateController(AdminService adminService, UserService userService, StatisticsService statisticsService, RestClient restClient, ProgramUserService programUserService) {
         this.adminService = adminService;
         this.userService = userService;
         this.statisticsService = statisticsService;
-        this.programClient = programClient;
+        this.restClient = restClient;
+        this.programUserService = programUserService;
     }
 
     @GetMapping("/dashboard")
@@ -189,7 +195,7 @@ public class PrivateController {
     @GetMapping("/dashboard/allenamento")
     public String visualizzaAllenamenti(Model model) {
 
-        List<ProgramSummary> listaAllenamenti = programClient.getPublicProgramNames();
+        List<ProgramSummary> listaAllenamenti = restClient.getPublicProgramNames();
 
         model.addAttribute("listaAllenamenti", listaAllenamenti);
 
@@ -199,7 +205,7 @@ public class PrivateController {
     @GetMapping("/dashboard/allenamento/{id}")
     public String visualizzaDettaglioAllenamento(@PathVariable Long id, Model model) {
 
-        Programma allenamento = programClient.getProgramDetailById(id);
+        Programma allenamento = restClient.getProgramDetailById(id);
 
         model.addAttribute("allenamento", allenamento);
 
@@ -228,8 +234,56 @@ public class PrivateController {
     }
 
     @GetMapping("/dashboard/nuovo-allenamento")
-    public String nuovoAllenamento(Authentication authentication) {
+    public String nuovoAllenamentoForm(Model model, Authentication authentication) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
 
-        return "private/nuovo_allenamento"
+        boolean isPro = authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_USER_PRO"));
+
+        if (!isPro) {
+            return "redirect:/dashboard";
+        }
+
+        List<EsercizioSceltaMultipla> catalogoEsercizi = restClient.getAllExercises();
+        model.addAttribute("catalogoEsercizi", catalogoEsercizi);
+
+        return "private/nuovo_allenamento";
+    }
+
+    @PostMapping("/dashboard/nuovo-allenamento")
+    public String creaNuovoAllenamento(@RequestParam String nomeProgramma,
+                                       @RequestParam(required = false) List<Long> idEsercizio,
+                                       @RequestParam(required = false) List<Integer> nSerie,
+                                       @RequestParam(required = false) List<Integer> nRipetizioni,
+                                       Authentication authentication,
+                                       RedirectAttributes redirectAttributes) {
+        if (authentication == null) {
+            return "redirect:/login";
+        }
+
+        if (idEsercizio == null || idEsercizio.isEmpty()) {
+            redirectAttributes.addFlashAttribute("messaggioErrore", "Seleziona almeno un esercizio.");
+            return "redirect:/dashboard/nuovo-allenamento";
+        }
+
+        List<NuovoEsercizioRequest> esercizi = new ArrayList<>();
+        for (int i = 0; i < idEsercizio.size(); i++) {
+            NuovoEsercizioRequest esercizio = new NuovoEsercizioRequest();
+            esercizio.setIdEsercizio(idEsercizio.get(i));
+            esercizio.setNSerie(nSerie.get(i));
+            esercizio.setNRipetizioni(nRipetizioni.get(i));
+            esercizi.add(esercizio);
+        }
+
+        NuovoProgrammaRequest request = new NuovoProgrammaRequest();
+        request.setNomeProgramma(nomeProgramma);
+        request.setEsercizi(esercizi);
+
+        String username = authentication.getName();
+        Long idProgramma = programUserService.creaProgrammaPersonale(request, username);
+
+        return "redirect:/dashboard/allenamento/" + idProgramma;
     }
 }
