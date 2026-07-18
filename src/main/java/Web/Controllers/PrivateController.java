@@ -193,9 +193,24 @@ public class PrivateController {
     }
 
     @GetMapping("/dashboard/allenamento")
-    public String visualizzaAllenamenti(Model model) {
+    public String visualizzaAllenamenti(Model model, Authentication authentication) {
 
-        List<ProgramSummary> listaAllenamenti = restClient.getPublicProgramNames();
+        List<ProgramSummary> listaAllenamenti = new ArrayList<>(restClient.getPublicProgramNames());
+
+        if (authentication != null) {
+            boolean isPro = authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_USER_PRO"));
+
+            if (isPro) {
+                String username = authentication.getName();
+                List<Long> idProgrammiPersonali = programUserService.getIdProgrammiUtente(username);
+
+                if (!idProgrammiPersonali.isEmpty()) {
+                    List<ProgramSummary> programmiPersonali = restClient.getProgramNamesByIds(idProgrammiPersonali);
+                    listaAllenamenti.addAll(programmiPersonali);
+                }
+            }
+        }
 
         model.addAttribute("listaAllenamenti", listaAllenamenti);
 

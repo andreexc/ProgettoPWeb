@@ -27,4 +27,7 @@ public interface RestClient {
 
     @PostMapping("/programs/new_program")
     Long createNewProgram(@RequestBody NuovoProgrammaRequest request );
+
+    @PostMapping("/programs/by-ids")
+    List<ProgramSummary> getProgramNamesByIds(@RequestBody List<Long> ids);
 }
