@@ -1,11 +1,12 @@
--- DROP TABLE IF EXISTS reviews;
--- DROP TABLE IF EXISTS personal_programs;
--- DROP TABLE IF EXISTS exercise;
+-- DROP TABLE IF EXISTS recensioni;
+-- DROP TABLE IF EXISTS completed;
 -- DROP TABLE IF EXISTS user_details;
 -- DROP TABLE IF EXISTS authorities;
+-- DROP TABLE IF EXISTS personal_programs;
+-- DROP TABLE IF EXISTS exercise;
 -- DROP TABLE IF EXISTS users;
 
--- Standard Spring-Security tables
+
 CREATE TABLE IF NOT EXISTS users (
    id BIGINT AUTO_INCREMENT PRIMARY KEY,
    username VARCHAR(50) NOT NULL UNIQUE,
