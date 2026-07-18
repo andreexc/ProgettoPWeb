@@ -113,4 +113,12 @@ public class StatisticsService {
         Integer conteggio = jdbcTemplate.queryForObject(sql, Integer.class, username);
         return conteggio != null ? conteggio : 0;
     }
+
+    public boolean addInCompleted(Long idProgramma, String username) {
+        String sql = "INSERT INTO completed (id_utente, id_programma, data) " +
+                "SELECT id, ?, CURRENT_DATE FROM users WHERE username = ?";
+
+        int righeInserite = jdbcTemplate.update(sql, idProgramma, username);
+        return righeInserite > 0;
+    }
 }

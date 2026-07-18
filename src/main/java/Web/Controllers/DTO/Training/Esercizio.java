@@ -1,20 +1,24 @@
 package Web.Controllers.DTO.Training;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 public class Esercizio {
+    private Long id;
     private String esercizio;
-    private int nSerie;
-    private int nRipetizioni;
+    private int kcal;
+
+    public Esercizio() { }
+
+    public Esercizio(Long id, String esercizio, int kcal) {
+        this.id = id;
+        this.esercizio = esercizio;
+        this.kcal = kcal;
+    }
+
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getEsercizio() { return esercizio; }
     public void setEsercizio(String esercizio) { this.esercizio = esercizio; }
 
-    @JsonProperty("nSerie")
-    public int getNSerie() { return nSerie; }
-    public void setNSerie(int nSerie) { this.nSerie = nSerie; }
-
-    @JsonProperty("nRipetizioni")
-    public int getNRipetizioni() { return nRipetizioni; }
-    public void setNRipetizioni(int nRipetizioni) { this.nRipetizioni = nRipetizioni; }
+    public int getKcal() { return kcal; }
+    public void setKcal(int kcal) { this.kcal = kcal; }
 }

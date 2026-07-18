@@ -2,7 +2,7 @@ package Web.Controllers;
 
 import Web.Services.AdminService;
 import Web.Services.UserService;
-import Web.Services.StatisticsService; // Iniettato correttamente per i grafici utente
+import Web.Services.StatisticsService;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
@@ -192,6 +192,23 @@ public class PrivateController {
         model.addAttribute("listaAllenamenti", listaAllenamenti);
 
         return "private/allenamenti_lista";
+    }
+
+    @PostMapping("/dashboard/allenamento/avvia")
+    public String avviaAllenamento(@RequestParam Long id,
+                                   Authentication authentication,
+                                   RedirectAttributes redirectAttributes) {
+        if (authentication != null) {
+            String username = authentication.getName();
+            boolean successo = statisticsService.addInCompleted(id, username);
+
+            if (successo) {
+                redirectAttributes.addFlashAttribute("messaggioSuccesso", "Allenamento registrato con successo!");
+            } else {
+                redirectAttributes.addFlashAttribute("messaggioErrore", "Errore nella registrazione dell'allenamento.");
+            }
+        }
+        return "redirect:/dashboard";
     }
 
     @GetMapping("/dashboard/inserisci-programma")

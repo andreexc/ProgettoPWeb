@@ -6,7 +6,7 @@ public class Programma {
     private Long id;
     private String nomeProgramma;
     private int kcalTotali;
-    private List<Esercizio> esercizi;
+    private List<EsercizioInProgramma> esercizi;
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -17,6 +17,6 @@ public class Programma {
     public int getKcalTotali() { return kcalTotali; }
     public void setKcalTotali(int kcalTotali) { this.kcalTotali = kcalTotali; }
 
-    public List<Esercizio> getEsercizi() { return esercizi; }
-    public void setEsercizi(List<Esercizio> esercizi) { this.esercizi = esercizi; }
+    public List<EsercizioInProgramma> getEsercizi() { return esercizi; }
+    public void setEsercizi(List<EsercizioInProgramma> esercizi) { this.esercizi = esercizi; }
 }
