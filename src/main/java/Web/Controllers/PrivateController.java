@@ -8,6 +8,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -15,6 +16,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import java.util.Map;
 import Web.Clients.ProgramClient;
+import Web.Controllers.DTO.Training.ProgramSummary;
 
 import Web.Controllers.DTO.Training.Programma;
 
@@ -187,11 +189,21 @@ public class PrivateController {
     @GetMapping("/dashboard/allenamento")
     public String visualizzaAllenamenti(Model model) {
 
-        List<Programma> listaAllenamenti = programClient.getPublicPrograms();
+        List<ProgramSummary> listaAllenamenti = programClient.getPublicProgramNames();
 
         model.addAttribute("listaAllenamenti", listaAllenamenti);
 
         return "private/allenamenti_lista";
+    }
+
+    @GetMapping("/dashboard/allenamento/{id}")
+    public String visualizzaDettaglioAllenamento(@PathVariable Long id, Model model) {
+
+        Programma allenamento = programClient.getProgramDetailById(id);
+
+        model.addAttribute("allenamento", allenamento);
+
+        return "private/allenamento_dettagliato";
     }
 
     @PostMapping("/dashboard/allenamento/avvia")
@@ -210,9 +222,14 @@ public class PrivateController {
         }
         return "redirect:/dashboard";
     }
-
     @GetMapping("/dashboard/inserisci-programma")
     public String inserisciProgrammaForm() {
         return "private/inserisci_programma";
+    }
+
+    @GetMapping("/dashboard/nuovo-allenamento")
+    public String nuovoAllenamento(Authentication authentication) {
+
+        return "private/nuovo_allenamento"
     }
 }

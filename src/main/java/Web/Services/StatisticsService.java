@@ -114,11 +114,12 @@ public class StatisticsService {
         return conteggio != null ? conteggio : 0;
     }
 
-    public boolean addInCompleted(Long idProgramma, String username) {
+    // Adds row to database to log new training sessions
+    public boolean addInCompleted(Long programID, String username) {
         String sql = "INSERT INTO completed (id_utente, id_programma, data) " +
                 "SELECT id, ?, CURRENT_DATE FROM users WHERE username = ?";
 
-        int righeInserite = jdbcTemplate.update(sql, idProgramma, username);
-        return righeInserite > 0;
+        int insertedRows = jdbcTemplate.update(sql, programID, username);
+        return insertedRows > 0;
     }
 }

@@ -61,37 +61,13 @@
             <h5 class="fw-bold">Nessun allenamento disponibile</h5>
             <p class="text-secondary mb-0">Al momento non ci sono allenamenti assegnati al tuo profilo.</p>
         </div>
-
-        <div class="row g-4">
-            <div class="col-lg-6" th:each="allenamento : ${listaAllenamenti}">
-                <div class="card workout-card shadow border-0 rounded-4 bg-white text-dark p-4 h-100 d-flex flex-column">
-
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <h5 class="fw-bold mb-0" th:text="${allenamento.nomeProgramma}">Nome Allenamento</h5>
-                        <span class="badge bg-danger kcal-badge rounded-pill px-3 py-2">
-                            <i class="bi bi-fire me-1"></i><span th:text="${allenamento.kcalTotali}">0</span> kcal
-                        </span>
-                    </div>
-
-                    <div class="flex-grow-1 mb-3">
-                        <div class="exercise-row d-flex justify-content-between align-items-center py-2"
-                             th:each="esercizio : ${allenamento.esercizi}">
-                            <span class="exercise-name"><i class="bi bi-dot text-primary"></i><span th:text="${esercizio.esercizio}">Esercizio</span></span>
-                            <span class="exercise-meta text-secondary">
-                                <span th:text="${esercizio.nSerie}">3</span> x <span th:text="${esercizio.nRipetizioni}">12</span>
-                            </span>
-                        </div>
-                    </div>
-
-                    <form th:action="@{/dashboard/allenamento/avvia}" method="post">
-                        <input type="hidden" name="id" th:value="${allenamento.id}">
-                        <button type="submit" class="btn btn-danger fw-bold w-100 rounded-pill">
-                            <i class="bi bi-play-btn-fill me-2"></i>Allenamento
-                        </button>
-                    </form>
-
+        <div class="col-lg-6" th:each="allenamento : ${listaAllenamenti}">
+            <a th:href="@{/dashboard/allenamento/{id}(id=${allenamento.id})}" class="text-decoration-none">
+                <div class="card workout-card shadow border-0 rounded-4 bg-white text-dark p-4 h-100 d-flex flex-row align-items-center justify-content-between">
+                    <h5 class="fw-bold mb-0" th:text="${allenamento.nomeProgramma}">Nome Allenamento</h5>
+                    <i class="bi bi-chevron-right text-danger fs-4"></i>
                 </div>
-            </div>
+            </a>
         </div>
     </div>
 </main>
