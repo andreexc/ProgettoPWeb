@@ -50,10 +50,18 @@ public class PrivateController {
         for (GrantedAuthority authority : authentication.getAuthorities()) {
             String role = authority.getAuthority();
             switch (role) {
-                case "ROLE_ADMIN" -> { return "redirect:/admin/home"; }
-                case "ROLE_USER_PRO" -> { return "redirect:/dashboard/pro/home"; }
-                case "ROLE_USER_BASIC" -> { return "redirect:/dashboard/basic/home"; }
-                case "ROLE_USER_PROVA" -> { return "redirect:/dashboard/prova/home"; }
+                case "ROLE_ADMIN" -> {
+                    return "redirect:/admin/home";
+                }
+                case "ROLE_USER_PRO" -> {
+                    return "redirect:/dashboard/pro/home";
+                }
+                case "ROLE_USER_BASIC" -> {
+                    return "redirect:/dashboard/basic/home";
+                }
+                case "ROLE_USER_PROVA" -> {
+                    return "redirect:/dashboard/prova/home";
+                }
             }
         }
         return "redirect:/index";
@@ -232,10 +240,10 @@ public class PrivateController {
         return "private/allenamenti_lista";
     }
 
-    @GetMapping("/dashboard/allenamento/{id}")
-    public String visualizzaDettaglioAllenamento(@PathVariable Long id, Model model) {
+    @GetMapping("/dashboard/allenamento/dettaglio")
+    public String visualizzaDettaglioAllenamento(@RequestParam String nome, Model model) {
 
-        Programma allenamento = restClient.getProgramDetailById(id);
+        Programma allenamento = restClient.getProgramDetailByName(nome);
 
         model.addAttribute("allenamento", allenamento);
 
@@ -319,8 +327,8 @@ public class PrivateController {
         request.setEsercizi(esercizi);
 
         String username = authentication.getName();
-        Long idProgramma = programUserService.creaProgrammaPersonale(request, username);
+        programUserService.creaProgrammaPersonale(request, username);
 
-        return "redirect:/dashboard/allenamento/" + idProgramma;
+        return "redirect:/dashboard/allenamento/dettaglio?nome=" + nomeProgramma;
     }
 }

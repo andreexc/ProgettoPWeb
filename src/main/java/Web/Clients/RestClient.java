@@ -5,10 +5,7 @@ import Web.Controllers.DTO.Training.Personalized.NuovoProgrammaRequest;
 import Web.Controllers.DTO.Training.Programma;
 import Web.Controllers.DTO.Training.ProgramSummary;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 
 import java.util.List;
@@ -19,8 +16,8 @@ public interface RestClient {
     @GetMapping("/programs/public")
     List<ProgramSummary> getPublicProgramNames();
 
-    @GetMapping("/programs/{id}/detail")
-    Programma getProgramDetailById(@PathVariable Long id);
+    @GetMapping("/programs/detail")
+    Programma getProgramDetailByName(@RequestParam String nome);
 
     @GetMapping("/exercises")
     List<EsercizioSceltaMultipla> getAllExercises();
