@@ -44,7 +44,7 @@ public class SecurityConfig {
         http
             .authorizeHttpRequests(authorize -> authorize
                 // Public Routes
-                .requestMatchers("/", "/index", "/login", "/signup", "/logout", "/registration-success").permitAll()
+                .requestMatchers("/", "/index", "/login", "/signup", "/logout", "/registration-success", "/contatti/**").permitAll()
                 .requestMatchers("/css/**", "/js/**", "/images/**").permitAll() // Risorse statiche
 
                 .requestMatchers("/dashboard/recensioni/api/carosello").permitAll()
