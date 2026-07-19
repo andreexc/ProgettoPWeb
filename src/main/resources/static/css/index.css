@@ -1,0 +1,51 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.btn-cta-contact {
+    background-color: #1a1a1a !important;
+    border-color: #1a1a1a !important;
+    color: #ffffff !important;
+}
+.btn-cta-contact:hover {
+    background-color: #333333 !important;
+    border-color: #333333 !important;
+}
+
+/* Review card inside the carousel */
+.custom-carousel-inner {
+    max-width: 650px;
+}
+
+.review-card {
+    max-width: 550px;
+    border-radius: 16px !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    background-color: #ffffff;
+}
+
+.hover-white:hover {
+    color: #ffffff !important;
+    transition: color 0.2s ease-in-out;
+}
+
+/* adjustment for small screens */
+@media (max-width: 767.98px) {
+    .hero-section {
+        min-height: auto;
+        padding-bottom: 4rem;
+    }
+    .hero-section h1 {
+        font-size: 2.5rem;
+    }
+    .custom-carousel-inner {
+        max-width: 100%;
+        padding: 0 2rem;
+    }
+}
