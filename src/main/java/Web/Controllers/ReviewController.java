@@ -15,7 +15,7 @@ public class ReviewController {
 
     @GetMapping("/api/carosello")
     public String getCarosello(Model model) {
-        model.addAttribute("recensioni", service.getAllRecensioni());
+        model.addAttribute("recensioni", service.getAllRecensioni(/* random amount for reviews */ 50));
         return "fragments/review :: carouselRecensioni";
     }
 
