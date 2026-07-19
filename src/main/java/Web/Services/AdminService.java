@@ -25,9 +25,8 @@ public class AdminService {
         return jdbcTemplate.queryForList(sql);
     }
     /* removes not enabled users and returns the number of how many got removed */
-    @Transactional // transactional is useful because we do multiple queries and operation :)
+    @Transactional // transactional is useful because we do multiple queries and operation :)@Transactional
     public int rimuoviUtentiScaduti() {
-        // Filters the interested users
         String targetUsersQuery = "SELECT u.username FROM users u " +
                 "JOIN authorities a ON u.username = a.username " +
                 "WHERE a.authority = 'ROLE_USER_PROVA' AND u.enabled = false";
@@ -36,10 +35,20 @@ public class AdminService {
 
         if (!usernamesScaduti.isEmpty()) {
             for (String username : usernamesScaduti) {
-                // delete on cascade due to foreign-key constraint
-                jdbcTemplate.update("DELETE FROM user_details WHERE username = ?", username);
+                // Deleting correlated tables first
+                jdbcTemplate.update("DELETE FROM recensioni WHERE username = ?", username);
                 jdbcTemplate.update("DELETE FROM authorities WHERE username = ?", username);
-                jdbcTemplate.update("DELETE FROM users WHERE username = ?", username);
+                jdbcTemplate.update("DELETE FROM user_details WHERE username = ?", username);
+
+                Long userId = jdbcTemplate.queryForObject("SELECT id FROM users WHERE username = ?", Long.class, username);
+
+                if (userId != null) {
+                    jdbcTemplate.update("DELETE FROM completed WHERE id_utente = ?", userId);
+                    jdbcTemplate.update("DELETE FROM programma_utente WHERE id_utente = ?", userId);
+
+                    // Finally deleting user
+                    jdbcTemplate.update("DELETE FROM users WHERE id = ?", userId);
+                }
             }
         }
 

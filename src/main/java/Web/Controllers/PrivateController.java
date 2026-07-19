@@ -246,18 +246,25 @@ public class PrivateController {
     public String avviaAllenamento(@RequestParam Long id,
                                    Authentication authentication,
                                    RedirectAttributes redirectAttributes) {
-        if (authentication != null) {
-            String username = authentication.getName();
-            boolean successo = statisticsService.addInCompleted(id, username);
-
-            if (successo) {
-                redirectAttributes.addFlashAttribute("messaggioSuccesso", "Allenamento registrato con successo!");
-            } else {
-                redirectAttributes.addFlashAttribute("messaggioErrore", "Errore nella registrazione dell'allenamento.");
-            }
+        if (authentication == null) {
+            return "redirect:/login";
         }
+
+        String username = authentication.getName();
+        boolean successo = statisticsService.addInCompleted(id, username);
+
+        if (successo) {
+            redirectAttributes.addFlashAttribute("messaggioSuccesso", "Allenamento registrato con successo!");
+        } else {
+            // if the service returns false then means the limit has been reched
+            redirectAttributes.addFlashAttribute("messaggioErrore",
+                    "Hai raggiunto il limite di 3 allenamenti gratuiti. Effettua l'upgrade per continuare!");
+            return "redirect:/dashboard/upgrade"; // invite to upgrade
+        }
+
         return "redirect:/dashboard";
     }
+
     @GetMapping("/dashboard/inserisci-programma")
     public String inserisciProgrammaForm() {
         return "private/inserisci_programma";
